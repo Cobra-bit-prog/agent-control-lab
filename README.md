@@ -1,10 +1,7 @@
-# Agent Control Lab (sandbox)
+# Agent Control lab (sandbox)
 
-Interactive preview. **Not production.** Live product: https://agent-control.net
+Self-contained product tour. **Not production.** Live site: https://agent-control.net
 
-Open the styled page:
+Open `index.html`: landing, ghost audit, packs, pricing, console, inbox (Allow / Always / Block), agents, policies, QR checkout (USDC / SOL / ETH), SDK snippet.
 
-- Vercel (sign in with your team if asked): https://ac-open-lab-zenith-market-ai.vercel.app
-- This repo: https://github.com/Cobra-bit-prog/agent-control-lab
-
-Do not send real funds here.
+Do not send real funds. No KYC. No card.

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agent Control Sandbox</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="banner">Sandbox only — production at <a href="https://agent-control.net">agent-control.net</a> is untouched. No KYC. No card.</div>
+  <div class="wrap">
+    <header class="top">
+      <a class="brand" href="./index.html"><span class="mark">⌘</span> Agent Control</a>
+      <nav class="top">
+        <a href="#audit">Ghost audit</a>
+        <a href="#packs">Packs</a>
+        <a href="#pricing">Pricing</a>
+        <a href="./docs.html">Docs</a>
+        <a href="./app.html">Console tour</a>
+      </nav>
+    </header>
+    <section class="hero">
+      <div>
+        <p class="kicker">Sandbox preview</p>
+        <h1>Keep your agents on a leash you can see.</h1>
+        <p class="muted">24 hours free. Then pay on-chain. No card. No KYC.</p>
+        <p><a class="btn" href="./app.html">Open console tour</a> <a class="btn ghost" href="./pay.html">Checkout</a></p>
+      </div>
+      <div class="card pad">
+        <p class="kicker">Sample</p>
+        <p><b>$2,400 paused</b> — first-time destination.</p>
+        <a class="btn" href="./app.html#inbox">Allow once</a>
+      </div>
+    </section>
+    <section id="audit">
+      <h2>What would we have blocked?</h2>
+      <form id="audit-form"><button class="btn" type="submit">Replay last sends</button></form>
+      <div id="audit-out"></div>
+    </section>
+    <section id="packs"><h2>Packs</h2><p>Treasury · Research · Payroll · Allowlist only</p></section>
+    <section id="pricing"><h2>24h free then $29 / $49 / $149</h2></section>
+  </div>
+  <script>document.getElementById('audit-form').onsubmit=e=>{e.preventDefault();document.getElementById('audit-out').textContent='2 fine, 1 paused, 1 aborted. $9100 would not have left.';};</script>
+</body>
+</html>

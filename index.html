@@ -11,25 +11,29 @@
 *{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Instrument Sans",Segoe UI,system-ui,sans-serif}
 a{color:var(--navy)}button,a.btn,[role=button]{cursor:pointer}
 .banner{position:sticky;top:0;z-index:30;background:#12263f;color:#fff;text-align:center;font-size:13px;padding:9px 14px}.banner a{color:#ffd7c8}.banner b{letter-spacing:.08em}
-.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+.wrap{max-width:1140px;margin:0 auto;padding:0 20px}
 header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 0;flex-wrap:wrap}
 .brand{display:flex;align-items:center;gap:10px;font-weight:700;text-decoration:none;color:var(--ink)}
-.mark{width:28px;height:28px;border-radius:8px;background:var(--navy);color:#fff;display:grid;place-items:center;font-size:13px}
-nav a{margin-left:14px;text-decoration:none;color:var(--muted);font-size:14px}nav a:hover{color:var(--ink)}
-.btn{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;padding:10px 16px;border:1px solid var(--coral);background:var(--coral);color:#fff;text-decoration:none;font-weight:600;font-size:14px}
+.mark{width:32px;height:32px;border-radius:9px;background:var(--navy);color:#fff;display:grid;place-items:center;overflow:hidden}
+.mark svg{display:block}
+nav a{margin-left:16px;text-decoration:none;color:var(--muted);font-size:14px;font-weight:500}nav a:hover{color:var(--ink)}
+nav .btn{margin-left:16px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border-radius:999px;padding:10px 16px;border:1px solid var(--coral);background:var(--coral);color:#fff;text-decoration:none;font-weight:600;font-size:14px}
 .btn.g{background:#fff;color:var(--navy);border-color:var(--line)}.btn.b{background:var(--bad);border-color:var(--bad)}
-h1{font-size:clamp(32px,5vw,52px);line-height:1.08;letter-spacing:-.03em;margin:0 0 12px}
+.btn.tiny{padding:6px 10px;font-size:12px;border-radius:10px}
+.btn.ghostb{background:#fff;color:var(--bad);border-color:#f0c7c2}
+h1{font-size:clamp(34px,4.8vw,56px);line-height:1.06;letter-spacing:-.035em;margin:0 0 14px;color:#12263f}
 h2{font-size:28px;letter-spacing:-.02em;margin:0 0 8px}
 .k{color:var(--coral);font-size:12px;letter-spacing:.16em;text-transform:uppercase;font-weight:700}
 .m{color:var(--muted)}.s{color:var(--subtle);font-size:12px}
 .limits{color:#3a4d63;font-size:13px;font-weight:600;margin:8px 0 0}
 .hint{display:block;margin-top:4px;color:#3a4d63;font-size:12px;line-height:1.35;font-weight:500}
 #v-inbox,#v-pay{max-width:640px}#v-docs{max-width:720px}
-.hero{display:grid;gap:28px;padding:12px 0 36px;background:radial-gradient(900px 420px at 80% -20%,rgb(255 236 228/.9),transparent 55%)}
-@media(min-width:900px){.hero{grid-template-columns:1.05fr .95fr;align-items:center}}
+.hero{display:grid;gap:32px;padding:8px 0 28px;background:radial-gradient(720px 380px at 88% 8%,rgb(255 236 228/.9),transparent 58%)}
 .card{background:var(--paper);border:1px solid var(--line);border-radius:20px;box-shadow:0 16px 40px -20px rgb(18 38 63/.18)}
 .pad{padding:20px}.g{display:grid;gap:14px}
 @media(min-width:800px){.g4{grid-template-columns:repeat(4,1fr)}.g2{grid-template-columns:1fr 1fr}}
+@media(min-width:900px){.g3{grid-template-columns:repeat(3,1fr)}}
 .st{background:var(--elev);border-radius:14px;padding:14px}.st b{display:block;font-size:22px}
 .hold{background:#fff4e8;border:1px solid #f3d5b5;border-radius:14px;padding:14px}
 .row{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid var(--line)}
@@ -66,6 +70,61 @@ input,select{width:100%;border:1px solid var(--line);border-radius:12px;padding:
 .mobnav a{flex:0 0 auto;border:1px solid var(--line);border-radius:999px;padding:8px 12px;text-decoration:none;color:var(--muted);font-size:13px}
 .mobnav a.on{background:var(--coral);color:#fff;border-color:var(--coral)}
 @media(min-width:900px){.mobnav{display:none}}
+.tag{display:inline-flex;align-items:center;background:#e7eef7;color:var(--navy);border-radius:999px;padding:5px 12px;font-size:12px;font-weight:600;margin:0 0 16px}
+.lede{font-size:18px;line-height:1.45;max-width:34ch}
+.vrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.vchip{display:inline-flex;align-items:center;gap:7px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:7px 11px;font-size:12.5px;color:var(--ink);white-space:nowrap;box-shadow:0 1px 0 rgb(18 38 63/.04)}
+.vchip i{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:10px;font-style:normal;font-weight:700;flex:none;line-height:1}
+.vchip .go{background:#dcfce7;color:#166534}.vchip .stop{background:#fde8e6;color:#c2413b;font-size:7px;letter-spacing:-1px}.vchip .key{background:#e8eef6;color:var(--navy)}
+.preview{padding:22px;box-shadow:0 28px 56px -28px rgb(18 38 63/.32)}
+.phead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.phead .price{margin:2px 0 8px}
+.chart{display:grid;grid-template-columns:40px 1fr;gap:8px;margin-top:14px;align-items:stretch}
+.ylabels{display:flex;flex-direction:column;justify-content:space-between;color:var(--subtle);font-size:11px;text-align:right;padding:2px 0}
+.xlabels{display:flex;justify-content:space-between;color:var(--subtle);font-size:11px;margin-top:6px}
+.preview .bars{height:96px;margin-top:0}
+.phead .chip{margin:0}
+.side .brand{display:flex;align-items:center}
+.review{display:flex;align-items:center;gap:12px;background:#fdecea;border:1px solid #f6c9c2;border-radius:14px;padding:12px 14px;margin-top:16px}
+.review .ico{width:32px;height:32px;border-radius:50%;background:var(--coral);color:#fff;display:grid;place-items:center;font-weight:700;flex:none}
+.review strong{color:#c2413b;display:block;font-size:13px}
+.review p{margin:2px 0 0;font-size:13px;color:var(--ink);line-height:1.35}
+.review .btn{margin-left:auto;flex:none}
+.pfoot{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+.pfoot p{margin:2px 0 0;font-size:12px;color:var(--muted);line-height:1.35}
+.pfoot b{display:flex;align-items:center;gap:6px;color:var(--ink);font-size:13px}
+.mods{padding:4px 0 36px}
+.mod{padding:22px;min-height:100%}
+.mod h3{display:flex;align-items:center;gap:10px;margin:0 0 8px;font-size:18px}
+.mod h3 a{color:inherit;text-decoration:none}
+.mod h3 a:hover{color:var(--coral)}
+.n{width:26px;height:26px;border-radius:50%;background:#e8eef6;color:var(--navy);display:inline-grid;place-items:center;font-size:12px;font-weight:700;flex:none}
+.count{margin-left:auto;background:var(--coral);color:#fff;border-radius:999px;min-width:22px;height:22px;display:inline-grid;place-items:center;font-size:11px;font-weight:700;padding:0 6px}
+.miniwrap{overflow:auto;margin-top:12px}
+.mini{width:100%;border-collapse:collapse;font-size:12px}
+.mini th{color:var(--subtle);font-weight:500;text-align:left;padding:8px 6px;border-bottom:1px solid var(--line)}
+.mini td{padding:9px 6px;border-top:1px solid var(--line);white-space:nowrap}
+.mini .mono{font-size:11px}
+.rs{font-weight:600}.rs.ok{color:var(--ok)}.rs.pause{color:var(--warn)}.rs.abort{color:var(--bad)}
+.csv{display:inline-flex;align-items:center;gap:6px;margin-top:12px;font-size:13px;font-weight:600;color:var(--navy);background:none;border:0;padding:0;font-family:inherit;cursor:pointer}
+.csv:hover{color:var(--coral)}
+.waiting{font-size:12px;font-weight:600;color:var(--muted);margin:12px 0 0}
+.req{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line);flex-wrap:wrap}
+.req b{display:block;font-size:13px}
+.acts{display:flex;gap:6px;flex:none}
+.more{display:inline-block;margin-top:12px;font-size:13px;font-weight:600;text-decoration:none}
+.paybox{display:grid;gap:12px;margin-top:14px}
+@media(min-width:520px){.paybox{grid-template-columns:1fr 1fr;align-items:stretch}}
+.assets{display:flex;flex-direction:column;gap:8px}
+.achip{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:12px;padding:9px 12px;text-decoration:none;color:var(--ink);font-size:13px;font-weight:600;background:#fff}
+.achip:hover{border-color:#c5d4e6}
+.dot{width:10px;height:10px;border-radius:50%;flex:none}
+.dot.usdc{background:#2775ca}.dot.sol{background:#14f195}.dot.eth{background:#627eea}
+.qrbox{background:var(--elev);border:1px solid var(--line);border-radius:14px;padding:12px;text-align:center;text-decoration:none;color:var(--muted);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font-size:12px}
+.qrbox svg{background:#fff;border-radius:8px;padding:6px;border:1px solid var(--line)}
+.fundnote{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:12px;color:var(--ok);font-weight:600}
+@media(min-width:960px){.hero{grid-template-columns:1.14fr .96fr;align-items:center}.vrow{flex-wrap:nowrap}}
+@media(max-width:700px){.review{flex-wrap:wrap}.review .btn{margin-left:0}.pfoot{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -74,48 +133,120 @@ input,select{width:100%;border:1px solid var(--line);border-radius:12px;padding:
 <div id="home" class="page on">
 <div class="wrap">
 <header class="top">
-  <a class="brand" href="#home"><span class="mark">⌘</span> Agent Control</a>
+  <a class="brand" href="#home"><span class="mark" aria-hidden="true"><svg viewBox="0 0 32 32" width="32" height="32"><rect width="32" height="32" rx="9" fill="#1e3a5f"/><path d="M16 7.2l7 2.5v6.1c0 3.8-2.8 6.6-7 8.1-4.2-1.5-7-4.3-7-8.1V9.7l7-2.5z" fill="none" stroke="#fff" stroke-width="1.6"/><circle cx="16" cy="15.2" r="1.6" fill="#fff"/><path d="M16 16.7v2.8" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></svg></span> Agent Control</a>
   <nav>
-    <a href="#console">Console</a>
-    <a href="#audit">Ghost audit</a>
-    <a href="#packs">Packs</a>
+    <a href="#docs">Docs</a>
     <a href="#pricing">Pricing</a>
-    <a class="btn" href="#console">Open tour</a>
+    <a href="mailto:support@agent-control.net">Contact</a>
+    <a class="btn" href="#console">Try free</a>
   </nav>
 </header>
 <section class="hero">
   <div>
-    <p class="k">Sandbox tour</p>
-    <h1>Keep your agents on a leash you can see.</h1>
-    <p class="m">Caps, a yes/no before anything signs, and a hold inbox when the destination is new. 1-day (24 hour) trial, then pay on-chain. No card. No KYC.</p>
-    <p style="margin-top:20px">
-      <a class="btn" href="#console">Open the console</a>
-      <a class="btn g" href="#audit">What would we have blocked?</a>
+    <p class="tag">Sky Ledger × Operator</p>
+    <h1>See every send before it happens.</h1>
+    <p class="m lede">Policy caps and a yes or no before your agent signs. You keep the keys.</p>
+    <p style="margin-top:22px">
+      <a class="btn" href="#console">Start free trial <span aria-hidden="true">→</span></a>
     </p>
-    <p><span class="chip">Not a custodian</span><span class="chip">You hold the keys</span><span class="chip">Solana · Ethereum · Base</span><span class="chip">No KYC</span></p>
-  </div>
-  <div class="card pad">
-    <p class="k">Sample overview</p>
-    <div class="g g4" style="margin-top:12px">
-      <div class="st"><span class="m">Wallets</span><b>3</b></div>
-      <div class="st"><span class="m">Moved in last 24h</span><b>$1,640</b><span class="hint">Transfer volume, not a balance</span></div>
-      <div class="st"><span class="m">On-chain balance</span><b>$48,210</b><span class="hint">Holdings across the 3 wallets</span></div>
-      <div class="st"><span class="m">Waiting</span><b>1</b></div>
+    <p class="s" style="margin:10px 0 0">1-day (24 hour) trial, then pay on-chain. No card. No KYC.</p>
+    <div class="vrow">
+      <span class="vchip"><i class="go" aria-hidden="true">✓</i> Within policy = auto</span>
+      <span class="vchip"><i class="stop" aria-hidden="true">❚❚</i> Outside policy = pause</span>
+      <span class="vchip"><i class="key" aria-hidden="true">🔑</i> Keys stay with you</span>
     </div>
-    <div class="hold" style="margin-top:14px">
-      <strong>$2,400 paused</strong>
-      <p class="m">Trade Agent Alpha — first-time destination. Needs a human.</p>
-      <a class="btn" href="#inbox">Allow once</a>
+  </div>
+  <div class="card preview">
+    <div class="phead">
+      <div>
+        <p class="m" style="margin:0">Spent today</p>
+        <p class="price">$1,240</p>
+        <span class="badge">Within policy</span>
+      </div>
+      <span class="chip">Today ▾</span>
+    </div>
+    <div class="chart" aria-hidden="true">
+      <div class="ylabels"><span>$1.5k</span><span>$1k</span><span>$500</span><span>$0</span></div>
+      <div>
+        <div class="bars"><i style="height:18%"></i><i style="height:28%"></i><i style="height:46%"></i><i style="height:62%"></i><i style="height:54%"></i><i style="height:78%"></i><i style="height:60%"></i><i style="height:42%"></i><i style="height:36%"></i><i style="height:22%"></i></div>
+        <div class="xlabels"><span>12 AM</span><span>6 AM</span><span>12 PM</span><span>6 PM</span><span>12 AM</span></div>
+      </div>
+    </div>
+    <div class="review">
+      <div class="ico" aria-hidden="true">!</div>
+      <div>
+        <strong>Review alert</strong>
+        <p>Transfer paused<br>$2,400 to unknown address</p>
+      </div>
+      <a class="btn" href="#inbox">Review</a>
+    </div>
+    <div class="pfoot">
+      <div>
+        <b><span aria-hidden="true">🛡</span> Policy</b>
+        <p>Daily cap $5,000<br>Per-tx cap $2,000</p>
+      </div>
+      <div>
+        <b><span aria-hidden="true">✓</span> Keys</b>
+        <p>Held by you<br>Agent cannot move funds</p>
+      </div>
     </div>
   </div>
 </section>
 
-<section>
-  <div class="g g4">
-    <div class="card pad"><b>Live wallets</b><p class="m">Native and USDC transfers we can read.</p></div>
-    <div class="card pad"><b>Daily caps</b><p class="m">Or tap a pack and start.</p></div>
-    <div class="card pad"><b>Pre-sign check</b><p class="m">Allow, hold, or abort before it signs.</p></div>
-    <div class="card pad"><b>Paper trail</b><p class="m">Every decision logged for review.</p></div>
+<section class="mods" aria-label="Product modules">
+  <div class="g g3">
+    <article class="card mod">
+      <h3><span class="n">1</span><a href="#audit">Ghost audit</a></h3>
+      <p class="m" style="margin:0">Replay the last sends in a read-only view. Understand what happened, verify policy, and export for your records.</p>
+      <div class="miniwrap">
+        <table class="mini">
+          <thead><tr><th>Time</th><th>To</th><th>Amount</th><th>Result</th></tr></thead>
+          <tbody>
+            <tr><td>May 20, 10:42 AM</td><td class="mono">0x7f3a…b9c1</td><td>$350.00</td><td class="rs ok">Allowed</td></tr>
+            <tr><td>May 20, 10:28 AM</td><td class="mono">7GdK…Lr9e</td><td>$1,200.00</td><td class="rs pause">Paused</td></tr>
+            <tr><td>May 20, 10:15 AM</td><td class="mono">0x91aa…c0de</td><td>$780.00</td><td class="rs abort">Aborted</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <button class="csv" type="button" onclick="exportAuditCsv()">📄 Export CSV</button>
+    </article>
+    <article class="card mod">
+      <h3><span class="n">2</span><a href="#inbox">Approval inbox</a><span class="count">3</span></h3>
+      <p class="m" style="margin:0">Your agent requests, your call. Approve once, set limits, or block. Nothing moves without you.</p>
+      <p class="waiting">Waiting for you</p>
+      <div class="req">
+        <div><b>Transfer $2,400</b><span class="s">To unknown address</span></div>
+        <div class="acts"><a class="btn tiny" href="#inbox">Allow once</a><a class="btn tiny ghostb" href="#inbox">Block</a></div>
+      </div>
+      <div class="req">
+        <div><b>Transfer $850</b><span class="s">To vendor wallet</span></div>
+        <div class="acts"><a class="btn tiny" href="#inbox">Allow once</a><a class="btn tiny ghostb" href="#inbox">Block</a></div>
+      </div>
+      <div class="req">
+        <div><b>Approve spend $1,000</b><span class="s">For AI research</span></div>
+        <div class="acts"><a class="btn tiny" href="#inbox">Allow once</a><a class="btn tiny ghostb" href="#inbox">Block</a></div>
+      </div>
+      <a class="more" href="#inbox">View all requests →</a>
+    </article>
+    <article class="card mod">
+      <h3><span class="n">3</span><a href="#pay">On-chain pay</a></h3>
+      <p class="m" style="margin:0">Collect payments directly to your wallet. Scan a link or QR. Set your price. No card. No KYC.</p>
+      <div class="paybox">
+        <div>
+          <p class="s" style="margin:0 0 8px">Pay with</p>
+          <div class="assets">
+            <a class="achip" href="#pay"><span class="dot usdc"></span> USDC</a>
+            <a class="achip" href="#pay"><span class="dot sol"></span> SOL</a>
+            <a class="achip" href="#pay"><span class="dot eth"></span> ETH</a>
+          </div>
+        </div>
+        <a class="qrbox" href="#pay">
+          <svg width="108" height="108" viewBox="0 0 29 29" aria-hidden="true"><rect width="29" height="29" fill="#fff"/><g fill="#12263f"><rect x="2" y="2" width="7" height="7"/><rect x="3" y="3" width="5" height="5" fill="#fff"/><rect x="4" y="4" width="3" height="3"/><rect x="20" y="2" width="7" height="7"/><rect x="21" y="3" width="5" height="5" fill="#fff"/><rect x="22" y="4" width="3" height="3"/><rect x="2" y="20" width="7" height="7"/><rect x="3" y="21" width="5" height="5" fill="#fff"/><rect x="4" y="22" width="3" height="3"/><rect x="11" y="2" width="2" height="2"/><rect x="14" y="3" width="2" height="2"/><rect x="17" y="2" width="2" height="3"/><rect x="11" y="6" width="3" height="2"/><rect x="16" y="6" width="2" height="2"/><rect x="2" y="11" width="2" height="3"/><rect x="5" y="12" width="3" height="2"/><rect x="10" y="10" width="3" height="3"/><rect x="14" y="11" width="2" height="2"/><rect x="17" y="10" width="2" height="3"/><rect x="20" y="11" width="3" height="2"/><rect x="24" y="10" width="3" height="2"/><rect x="11" y="15" width="2" height="2"/><rect x="14" y="14" width="4" height="2"/><rect x="20" y="14" width="2" height="3"/><rect x="24" y="15" width="3" height="2"/><rect x="2" y="16" width="3" height="2"/><rect x="7" y="16" width="2" height="2"/><rect x="11" y="19" width="2" height="3"/><rect x="14" y="18" width="2" height="2"/><rect x="17" y="19" width="3" height="2"/><rect x="21" y="18" width="2" height="2"/><rect x="24" y="20" width="3" height="2"/><rect x="11" y="24" width="3" height="3"/><rect x="16" y="23" width="2" height="2"/><rect x="19" y="24" width="3" height="3"/><rect x="24" y="24" width="3" height="3"/></g></svg>
+          <span>Scan to pay<br>or share payment link</span>
+        </a>
+      </div>
+      <p class="fundnote"><span aria-hidden="true">✓</span> Funds go directly to your wallet. Demo only — do not send real funds.</p>
+    </article>
   </div>
 </section>
 
@@ -170,7 +301,7 @@ input,select{width:100%;border:1px solid var(--line);border-radius:12px;padding:
 <div id="app" class="page">
   <div class="shell">
     <aside class="side">
-      <a class="brand" href="#home" style="color:#fff;margin-bottom:8px"><span class="mark">⌘</span> Agent Control</a>
+      <a class="brand" href="#home" style="color:#fff;margin-bottom:8px"><span class="mark" aria-hidden="true"><svg viewBox="0 0 32 32" width="32" height="32"><rect width="32" height="32" rx="9" fill="#1e3a5f"/><path d="M16 7.2l7 2.5v6.1c0 3.8-2.8 6.6-7 8.1-4.2-1.5-7-4.3-7-8.1V9.7l7-2.5z" fill="none" stroke="#fff" stroke-width="1.6"/><circle cx="16" cy="15.2" r="1.6" fill="#fff"/><path d="M16 16.7v2.8" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></svg></span> Agent Control</a>
       <p class="s" style="padding:0 12px 8px;letter-spacing:.14em;text-transform:uppercase">Sandbox tour</p>
       <a id="n-console" href="#console">Overview</a>
       <a id="n-inbox" href="#inbox">Inbox <span class="badge" id="hold-badge">1</span></a>
@@ -423,6 +554,16 @@ function show(){
       if (el) setTimeout(() => el.scrollIntoView({behavior:"smooth",block:"start"}), 20);
     } else window.scrollTo(0,0);
   }
+}
+function exportAuditCsv(){
+  const csv = "Time,To,Amount,Result\nMay 20 10:42 AM,0x7f3a...b9c1,$350.00,Allowed\nMay 20 10:28 AM,7GdK...Lr9e,$1200.00,Paused\nMay 20 10:15 AM,0x91aa...c0de,$780.00,Aborted\n";
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([csv], {type:"text/csv"}));
+  a.download = "ghost-audit-sample.csv";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(a.href);
 }
 window.addEventListener("hashchange", show);
 show();

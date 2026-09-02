@@ -187,7 +187,7 @@ input,select{width:100%;border:1px solid var(--line);border-radius:12px;padding:
       </div>
       <div>
         <b><span aria-hidden="true">✓</span> Keys</b>
-        <p>Held by you<br>Agent cannot move funds</p>
+        <p>Held by you<br>Skip the hook, we cannot stop a send</p>
       </div>
     </div>
   </div>
@@ -212,7 +212,7 @@ input,select{width:100%;border:1px solid var(--line);border-radius:12px;padding:
     </article>
     <article class="card mod">
       <h3><span class="n">2</span><a href="#inbox">Approval inbox</a><span class="count">3</span></h3>
-      <p class="m" style="margin:0">Your agent requests, your call. Approve once, set limits, or block. Nothing moves without you.</p>
+      <p class="m" style="margin:0">Your agent requests, your call. Approve once, set limits, or block. Holds work only if the agent honors the hook.</p>
       <p class="waiting">Waiting for you</p>
       <div class="req">
         <div><b>Transfer $2,400</b><span class="s">To unknown address</span></div>
@@ -290,8 +290,8 @@ input,select{width:100%;border:1px solid var(--line);border-radius:12px;padding:
 <section class="faq">
   <h2>Questions operators ask</h2>
   <details open><summary>Do you hold my keys?</summary><p class="m">No. We return allow, hold, or abort. You still sign. If the agent skips the hook, we cannot physically stop the chain.</p></details>
-  <details><summary>How do I pay? Is there KYC?</summary><p class="m">No KYC and no card. Default is USDC. Scan the QR or copy amount + address. Do not send from an exchange — they drop the memo / unique dust.</p></details>
-  <details><summary>After the 1-day trial?</summary><p class="m">After 24 hours the dashboard locks until you pay. The hook returns abort so a leftover agent cannot keep spending. Renewal reminder 7 days before month end. No autopay.</p></details>
+  <details><summary>How do I pay? Is there KYC?</summary><p class="m">Pay Agent Control for Starter or Pro. No KYC and no card. Default is USDC. Scan the QR or copy amount + address. Do not send from an exchange — they drop the memo / unique dust.</p></details>
+  <details><summary>After the 1-day trial?</summary><p class="m">After 24 hours the dashboard locks until you pay. The hook returns abort; a leftover agent that honors it cannot keep spending. Renewal reminder 7 days before month end. No autopay.</p></details>
   <details><summary>Hold vs block?</summary><p class="m">Hold waits for a human: Allow once, Always allow, or Block. Block is a hard no (paused agent or denylist).</p></details>
 </section>
 <footer>SANDBOX · NOT LIVE · Not a custodian · Not insurance · Do not send real funds · <a href="mailto:support@agent-control.net">support@agent-control.net</a></footer>
@@ -364,7 +364,7 @@ input,select{width:100%;border:1px solid var(--line);border-radius:12px;padding:
 
           <div id="v-inbox" class="view">
             <h2>Waiting for you</h2>
-            <p class="m">Off-policy sends pause here. The agent must not sign until you decide, or the request expires (10 minutes).</p>
+            <p class="m">Off-policy sends pause here if the agent honors the hook. It must not sign until you decide, or the request expires (10 minutes).</p>
             <div class="card pad" id="hold-card" style="margin-top:16px">
               <span class="badge wbadge">Waiting for you</span>
               <p style="margin:8px 0 0"><b>Trade Agent Alpha · Base</b></p>

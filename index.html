@@ -10,7 +10,7 @@
 :root{--bg:#eef3f8;--paper:#fff;--elev:#f6f8fb;--ink:#12263f;--muted:#5b6b80;--subtle:#8a96a8;--line:#dce4ee;--coral:#e85d4c;--navy:#1e3a5f;--ok:#1f7a4c;--warn:#c47b16;--bad:#c2413b;--chart:#5b8def}
 *{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Instrument Sans",Segoe UI,system-ui,sans-serif}
 a{color:var(--navy)}button,a.btn,[role=button]{cursor:pointer}
-.banner{background:#12263f;color:#fff;text-align:center;font-size:13px;padding:9px 14px}.banner a{color:#ffd7c8}
+.banner{position:sticky;top:0;z-index:30;background:#12263f;color:#fff;text-align:center;font-size:13px;padding:9px 14px}.banner a{color:#ffd7c8}.banner b{letter-spacing:.08em}
 .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
 header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 0;flex-wrap:wrap}
 .brand{display:flex;align-items:center;gap:10px;font-weight:700;text-decoration:none;color:var(--ink)}
@@ -22,6 +22,9 @@ h1{font-size:clamp(32px,5vw,52px);line-height:1.08;letter-spacing:-.03em;margin:
 h2{font-size:28px;letter-spacing:-.02em;margin:0 0 8px}
 .k{color:var(--coral);font-size:12px;letter-spacing:.16em;text-transform:uppercase;font-weight:700}
 .m{color:var(--muted)}.s{color:var(--subtle);font-size:12px}
+.limits{color:#3a4d63;font-size:13px;font-weight:600;margin:8px 0 0}
+.hint{display:block;margin-top:4px;color:#3a4d63;font-size:12px;line-height:1.35;font-weight:500}
+#v-inbox,#v-pay{max-width:640px}#v-docs{max-width:720px}
 .hero{display:grid;gap:28px;padding:12px 0 36px;background:radial-gradient(900px 420px at 80% -20%,rgb(255 236 228/.9),transparent 55%)}
 @media(min-width:900px){.hero{grid-template-columns:1.05fr .95fr;align-items:center}}
 .card{background:var(--paper);border:1px solid var(--line);border-radius:20px;box-shadow:0 16px 40px -20px rgb(18 38 63/.18)}
@@ -35,11 +38,13 @@ h2{font-size:28px;letter-spacing:-.02em;margin:0 0 8px}
 .shell{display:grid;min-height:100vh}@media(min-width:900px){.shell{grid-template-columns:220px 1fr}}
 .side{background:#12263f;color:#e8eef6;padding:20px 14px}.side a{display:block;color:#c5d0de;text-decoration:none;padding:10px 12px;border-radius:10px}
 .side a:hover,.side a.on{background:#1e3a5f;color:#fff}
-.main{padding:24px}.warnbox{background:#fff4e5;border:1px solid #efc48a;padding:14px;border-radius:14px}
+.main{padding:24px;position:relative;min-height:70vh}.warnbox{background:#fff4e5;border:1px solid #efc48a;padding:14px;border-radius:14px}
 .bigamt{font-size:34px;font-weight:700}.badge{display:inline-block;background:#dcfce7;color:#166534;border-radius:999px;padding:2px 8px;font-size:12px}
 .wbadge{background:#fff4e8;color:var(--warn)}
 section{padding:18px 0 40px}footer{padding:24px 0 48px;color:var(--muted);font-size:13px}
-.page{display:none}.page.on{display:block}
+.page{display:none !important}.page.on{display:block !important}
+.view{display:none !important}.view.on{display:block !important}
+[hidden]{display:none !important}
 .bars{display:flex;align-items:flex-end;gap:8px;height:112px;margin-top:16px}
 .bars i{flex:1;background:var(--chart);border-radius:3px;display:block}
 .faq details{border-top:1px solid var(--line);padding:12px 0}.faq summary{cursor:pointer;font-weight:600}
@@ -48,7 +53,10 @@ pre.mono{background:#12263f;color:#e8eef6;padding:16px;border-radius:16px;overfl
 .tabs{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
 .tabs button{border-radius:999px;border:1px solid var(--line);background:var(--elev);padding:8px 14px;font:inherit}
 .tabs button.on{background:var(--coral);color:#fff;border-color:var(--coral)}
-.lock{max-width:480px;margin:60px auto;text-align:center}
+.lock{display:none !important;max-width:520px;margin:48px auto;text-align:center;background:#fff;border:1px solid var(--line);border-radius:20px;padding:36px 24px;box-shadow:0 16px 40px -20px rgb(18 38 63/.18)}
+.lock.on{display:block !important}
+.appbar{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:12px 20px;background:#fff;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.locked .appbar{background:#fff4e5}
 .agent{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;border-top:1px solid var(--line);flex-wrap:wrap}
 .bar{height:8px;background:var(--elev);border-radius:999px;overflow:hidden;margin-top:10px}.bar span{display:block;height:100%;background:var(--chart)}
 input,select{width:100%;border:1px solid var(--line);border-radius:12px;padding:10px 12px;font:inherit;background:#fff}
@@ -60,7 +68,7 @@ input,select{width:100%;border:1px solid var(--line);border-radius:12px;padding:
 </style>
 </head>
 <body>
-<div class="banner">Sandbox tour — live product is <a href="https://agent-control.net">agent-control.net</a>. Do not send real funds. No KYC. No card.</div>
+<div class="banner"><b>SANDBOX · NOT LIVE</b> — Do not send real funds. Live product is <a href="https://agent-control.net">agent-control.net</a>. No KYC. No card.</div>
 
 <div id="home" class="page on">
 <div class="wrap">
@@ -78,7 +86,7 @@ input,select{width:100%;border:1px solid var(--line);border-radius:12px;padding:
   <div>
     <p class="k">Sandbox tour</p>
     <h1>Keep your agents on a leash you can see.</h1>
-    <p class="m">Caps, a yes/no before anything signs, and a hold inbox when the destination is new. 24 hours free. Then pay on-chain. No card. No KYC.</p>
+    <p class="m">Caps, a yes/no before anything signs, and a hold inbox when the destination is new. 1-day (24 hour) trial, then pay on-chain. No card. No KYC.</p>
     <p style="margin-top:20px">
       <a class="btn" href="#console">Open the console</a>
       <a class="btn g" href="#audit">What would we have blocked?</a>
@@ -89,8 +97,8 @@ input,select{width:100%;border:1px solid var(--line);border-radius:12px;padding:
     <p class="k">Sample overview</p>
     <div class="g g4" style="margin-top:12px">
       <div class="st"><span class="m">Wallets</span><b>3</b></div>
-      <div class="st"><span class="m">24h</span><b>$1,640</b></div>
-      <div class="st"><span class="m">On-chain</span><b>$48,210</b></div>
+      <div class="st"><span class="m">Moved in last 24h</span><b>$1,640</b><span class="hint">Transfer volume, not a balance</span></div>
+      <div class="st"><span class="m">On-chain balance</span><b>$48,210</b><span class="hint">Holdings across the 3 wallets</span></div>
       <div class="st"><span class="m">Waiting</span><b>1</b></div>
     </div>
     <div class="hold" style="margin-top:14px">
@@ -129,18 +137,18 @@ input,select{width:100%;border:1px solid var(--line);border-radius:12px;padding:
   <h2>One-tap policy packs</h2>
   <p class="m">Operators should not invent limits.</p>
   <div class="g g4" style="margin-top:14px">
-    <div class="card pad"><b>Treasury bot</b><p class="m">Tight single-send cap. New addresses wait for you.</p><p class="s">Daily $5,000 · max $500 · first-time lock</p></div>
-    <div class="card pad"><b>Research agent</b><p class="m">Small experiments. Almost everything should be cheap.</p><p class="s">Daily $400 · max $80</p></div>
-    <div class="card pad"><b>Payroll</b><p class="m">Larger known pays. Unknown destinations still hold.</p><p class="s">Daily $25,000 · max $8,000</p></div>
-    <div class="card pad"><b>Only these addresses</b><p class="m">You name up to three destinations. Everything else waits.</p><p class="s">Allowlist only</p></div>
+    <div class="card pad"><b>Treasury bot</b><p class="m">Tight single-send cap. New addresses wait for you.</p><p class="limits">Daily $5,000 · max $500 · first-time lock</p></div>
+    <div class="card pad"><b>Research agent</b><p class="m">Small experiments. Almost everything should be cheap.</p><p class="limits">Daily $400 · max $80</p></div>
+    <div class="card pad"><b>Payroll</b><p class="m">Larger known pays. Unknown destinations still hold.</p><p class="limits">Daily $25,000 · max $8,000</p></div>
+    <div class="card pad"><b>Only these addresses</b><p class="m">You name up to three destinations. Everything else waits.</p><p class="limits">Allowlist only</p></div>
   </div>
 </section>
 
 <section id="pricing">
-  <h2>24 hours free. Then on-chain.</h2>
-  <p class="m">No card. No KYC. USDC on Solana, or native SOL / ETH. Unique amount so the watcher can match.</p>
+  <h2>1-day trial, then on-chain.</h2>
+  <p class="m">24 hours free. No card. No KYC. USDC on Solana, or native SOL / ETH. Unique amount so the watcher can match.</p>
   <div class="g g4" style="margin-top:14px">
-    <div class="card pad"><p class="m">Trial</p><p class="price">24h</p><p class="m">Then the dashboard locks.</p><p><a class="btn g" href="#console">Open tour</a></p></div>
+    <div class="card pad"><p class="m">Trial</p><p class="price">1 day</p><p class="m">24 hours, then the dashboard locks.</p><p><a class="btn g" href="#console">Open tour</a></p></div>
     <div class="card pad"><p class="m">Starter</p><p class="price">$29</p><p class="m">Small fleet.</p><p><a class="btn" href="#pay">Pay USDC</a></p></div>
     <div class="card pad"><p class="m">Pro</p><p class="price">$49</p><p class="m">Priority alerts.</p><p><a class="btn g" href="#pay">Pay on-chain</a></p></div>
     <div class="card pad"><p class="m">Team</p><p class="price">$149</p><p class="m">Builder + Approver.</p><p><a class="btn g" href="#pay">Pay on-chain</a></p></div>
@@ -151,10 +159,10 @@ input,select{width:100%;border:1px solid var(--line);border-radius:12px;padding:
   <h2>Questions operators ask</h2>
   <details open><summary>Do you hold my keys?</summary><p class="m">No. We return allow, hold, or abort. You still sign. If the agent skips the hook, we cannot physically stop the chain.</p></details>
   <details><summary>How do I pay? Is there KYC?</summary><p class="m">No KYC and no card. Default is USDC. Scan the QR or copy amount + address. Do not send from an exchange — they drop the memo / unique dust.</p></details>
-  <details><summary>After 24 hours?</summary><p class="m">Dashboard locks until you pay. The hook returns abort so a leftover agent cannot keep spending. Renewal reminder 7 days before month end. No autopay.</p></details>
+  <details><summary>After the 1-day trial?</summary><p class="m">After 24 hours the dashboard locks until you pay. The hook returns abort so a leftover agent cannot keep spending. Renewal reminder 7 days before month end. No autopay.</p></details>
   <details><summary>Hold vs block?</summary><p class="m">Hold waits for a human: Allow once, Always allow, or Block. Block is a hard no (paused agent or denylist).</p></details>
 </section>
-<footer>Sandbox · Not a custodian · Not insurance · <a href="mailto:support@agent-control.net">support@agent-control.net</a></footer>
+<footer>SANDBOX · NOT LIVE · Not a custodian · Not insurance · Do not send real funds · <a href="mailto:support@agent-control.net">support@agent-control.net</a></footer>
 </div>
 </div>
 
@@ -172,34 +180,38 @@ input,select{width:100%;border:1px solid var(--line);border-radius:12px;padding:
       <a href="#home">← Landing</a>
     </aside>
     <div>
-      <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;padding:12px 20px;background:#fff;border-bottom:1px solid var(--line);flex-wrap:wrap">
-        <span class="m">24-hour trial · <b>18 hours left</b></span>
-        <button class="btn g" type="button" onclick="toggleLock()">Preview dashboard lock</button>
+      <div class="appbar" id="appbar">
+        <span class="m">1-day trial (24 hours) · <b>18 hours left</b></span>
+        <button class="btn g" id="lock-btn" type="button" onclick="toggleLock()">Preview dashboard lock</button>
       </div>
       <div class="mobnav">
         <a href="#console">Overview</a><a href="#inbox">Inbox</a><a href="#agents">Agents</a><a href="#policies">Policies</a><a href="#pay">Pay</a><a href="#docs">Docs</a>
       </div>
       <div class="main">
-        <div id="lock-screen" class="lock" style="display:none">
+        <div id="lock-screen" class="lock">
           <p class="k">Trial ended</p>
           <h2>Dashboard locked</h2>
-          <p class="m">24 hours is up. Monitoring pauses and the hook returns abort until you pay on-chain. No card. No KYC.</p>
-          <p><a class="btn" href="#pay" onclick="toggleLock(false)">Pay Starter $29 USDC</a></p>
+          <p class="m">The 1-day (24 hour) trial is up. Monitoring pauses and the hook returns abort until you pay on-chain. No card. No KYC. This is a sandbox preview — do not send real funds.</p>
+          <p>
+            <a class="btn" href="#pay" onclick="setLock(false)">Pay Starter $29 USDC</a>
+            <button class="btn g" type="button" onclick="setLock(false)">Back to dashboard</button>
+          </p>
         </div>
         <div id="app-body">
-          <div id="v-console">
+          <div id="v-console" class="view">
             <h2>Overview</h2>
-            <p class="m">Sample fleet — three wallets, one send waiting on a human.</p>
+            <p class="m">Sample fleet — three wallets, one send waiting on a human. Figures below are demo data, not a live wallet.</p>
             <div class="g g4" style="margin-top:14px">
               <div class="st"><span class="m">Agent wallets</span><b>3</b></div>
-              <div class="st"><span class="m">Moved 24h</span><b>$1,640</b></div>
-              <div class="st"><span class="m">On-chain</span><b>$48,210</b></div>
-              <div class="st"><span class="m">Waiting</span><b id="wait-n">1</b></div>
+              <div class="st"><span class="m">Moved in last 24h</span><b>$1,640</b><span class="hint">Transfer volume we saw yesterday</span></div>
+              <div class="st"><span class="m">On-chain balance</span><b>$48,210</b><span class="hint">Current holdings, not volume</span></div>
+              <div class="st"><span class="m">Waiting</span><b id="wait-n">1</b><span class="hint">Holds that need a human</span></div>
             </div>
             <div class="g g2" style="margin-top:16px">
               <div class="card pad">
-                <p class="m">Spent today</p>
+                <p class="m">Spent today (toward daily caps)</p>
                 <p class="price">$1,240 <span class="badge">within policy</span></p>
+                <p class="hint">Today’s cap usage — not the same as 24h volume ($1,640) or on-chain balance ($48,210).</p>
                 <div class="bars"><i style="height:22%"></i><i style="height:34%"></i><i style="height:48%"></i><i style="height:52%"></i><i style="height:76%"></i><i style="height:58%"></i><i style="height:44%"></i><i style="height:31%"></i><i style="height:18%"></i></div>
               </div>
               <div class="card pad">
@@ -218,7 +230,7 @@ input,select{width:100%;border:1px solid var(--line);border-radius:12px;padding:
             </div>
           </div>
 
-          <div id="v-inbox" style="display:none;max-width:640px">
+          <div id="v-inbox" class="view">
             <h2>Waiting for you</h2>
             <p class="m">Off-policy sends pause here. The agent must not sign until you decide, or the request expires (10 minutes).</p>
             <div class="card pad" id="hold-card" style="margin-top:16px">
@@ -233,13 +245,14 @@ input,select{width:100%;border:1px solid var(--line);border-radius:12px;padding:
                 <button class="btn b" type="button" onclick="decide('Blocked. The agent must not sign.')">Block</button>
               </p>
             </div>
-            <div class="card pad" id="hold-done" style="display:none;margin-top:16px;text-align:center">
-              <p id="im"><b></b></p>
-              <p class="m">Inbox clear. Next unknown destination waits here.</p>
+            <div class="card pad" id="hold-done" hidden style="margin-top:16px;text-align:center">
+              <p id="im"></p>
+              <p class="m">Inbox clear. Nothing waiting. The next unknown destination will pause here.</p>
+              <p><button class="btn g" type="button" onclick="resetInbox(true)">Restore sample hold</button></p>
             </div>
           </div>
 
-          <div id="v-agents" style="display:none">
+          <div id="v-agents" class="view">
             <h2>Agents</h2>
             <p class="m">3 wallets on this sandbox tour.</p>
             <div class="card pad" style="margin-top:14px">
@@ -259,7 +272,7 @@ input,select{width:100%;border:1px solid var(--line);border-radius:12px;padding:
             </div>
           </div>
 
-          <div id="v-policies" style="display:none">
+          <div id="v-policies" class="view">
             <h2>Policies</h2>
             <p class="m">One tap. Applied to Trade Agent Alpha in this tour.</p>
             <div class="g g2" style="margin-top:14px">
@@ -270,7 +283,7 @@ input,select{width:100%;border:1px solid var(--line);border-radius:12px;padding:
             </div>
           </div>
 
-          <div id="v-pay" style="display:none;max-width:640px">
+          <div id="v-pay" class="view">
             <p class="k">No KYC · no card · no exchange send</p>
             <h2>Starter $29 · pay on-chain</h2>
             <p class="m">Unique dust so the watcher can match this invoice. Scan or copy. No Phantom prompt in the page.</p>
@@ -280,7 +293,7 @@ input,select{width:100%;border:1px solid var(--line);border-radius:12px;padding:
               <button type="button" id="t-eth" onclick="setAsset('eth')">ETH</button>
             </div>
             <div class="card pad" style="text-align:center">
-              <img id="qr" width="220" height="220" alt="Payment QR" style="border-radius:12px;border:1px solid var(--line);background:#fff;padding:8px"/>
+              <img id="qr" width="220" height="220" alt="Demo payment QR — do not send real funds" style="border-radius:12px;border:1px solid var(--line);background:#fff;padding:8px"/>
               <p class="bigamt" id="amt">29.000137 USDC</p>
               <p class="s" id="chainl">Solana · demo invoice</p>
               <p class="mono" id="paddr"></p>
@@ -294,7 +307,7 @@ input,select{width:100%;border:1px solid var(--line);border-radius:12px;padding:
             <p id="paid" class="ok"></p>
           </div>
 
-          <div id="v-docs" style="display:none;max-width:720px">
+          <div id="v-docs" class="view">
             <h2>Wire the check. Honor must_abort.</h2>
             <p class="m">If you skip the hook, we cannot stop the chain.</p>
             <pre class="mono">const r = await fetch("https://agent-control.net/api/v1/check", {
@@ -313,28 +326,52 @@ if (j.decision === "hold") await poll(j.approval_id);</pre>
 </div>
 
 <script>
+const LANDING = new Set(["", "home", "audit", "packs", "pricing"]);
+const APP = ["console", "inbox", "agents", "policies", "pay", "docs"];
 const ASSETS = {
-  usdc: { amt:"29.000137", unit:"USDC", chain:"Solana", addr:"7nSandboxPayDoNotSend11111111111111111111", payload:"solana:7nSandboxPayDoNotSend11111111111111111111?amount=29.000137&spl-token=EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v" },
-  sol: { amt:"0.183714", unit:"SOL", chain:"Solana", addr:"7nSandboxPayDoNotSend11111111111111111111", payload:"solana:7nSandboxPayDoNotSend11111111111111111111?amount=0.183714" },
-  eth: { amt:"0.008241", unit:"ETH", chain:"Ethereum", addr:"0xACsandbox00000000000000000000000000pay01", payload:"ethereum:0xACsandbox00000000000000000000000000pay01?value=8241000000000000" }
+  usdc: { amt:"29.000137", unit:"USDC", chain:"Solana", addr:"7nSandboxPayDoNotSend11111111111111111111", qr:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxOTYgMTk2Ij48cGF0aCB0cmFuc2Zvcm09InNjYWxlKDQpIiBzdHJva2U9IiMwMDAiIGQ9Ik0yIDIuNWg3bTEgMGgzbTUgMGgybTUgMGgzbTIgMGgzbTEgMGgxbTMgMGgxbTEgMGg3bS00NSAxaDFtNSAwaDFtMSAwaDFtMyAwaDFtMiAwaDFtMSAwaDFtOSAwaDFtMSAwaDJtMSAwaDFtMiAwaDFtMiAwaDFtNSAwaDFtLTQ1IDFoMW0xIDBoM20xIDBoMW0yIDBoMW0zIDBoMW0yIDBoM20xIDBoMW0xIDBoMW0yIDBoMm01IDBoMW0yIDBoMW0yIDBoMW0xIDBoM20xIDBoMW0tNDUgMWgxbTEgMGgzbTEgMGgxbTEgMGgxbTIgMGgxbTEgMGgxbTEgMGgxbTEgMGg0bTEgMGg1bTIgMGgybTQgMGgybTEgMGgxbTEgMGgzbTEgMGgxbS00NSAxaDFtMSAwaDNtMSAwaDFtMyAwaDFtMSAwaDFtMSAwaDFtMyAwaDFtMSAwaDhtMSAwaDFtMSAwaDFtMSAwaDRtMSAwaDFtMSAwaDNtMSAwaDFtLTQ1IDFoMW01IDBoMW0yIDBoMm01IDBoMW0yIDBoMm0zIDBoMW0zIDBoM203IDBoMW01IDBoMW0tNDUgMWg3bTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGg3bS0zNyAxaDJtMSAwaDFtMyAwaDNtMiAwaDFtMyAwaDNtMyAwaDJtMSAwaDNtLTM2IDFoMW0xIDBoMm0xIDBoM20xIDBoNG0xIDBoM20yIDBoN20xIDBoM20xIDBoMW0zIDBoMm0xIDBoMW0yIDBoMW0xIDBoMm0tNDUgMWgybTUgMGgybTIgMGgxbTEgMGgxbTQgMGgybTQgMGgybTMgMGgybTEgMGgxbTIgMGgzbTEgMGgybTEgMGgxbTEgMGgxbS00NSAxaDJtMiAwaDRtMSAwaDFtMSAwaDFtMSAwaDJtMiAwaDFtMiAwaDJtNiAwaDJtMSAwaDFtMSAwaDFtNSAwaDJtMiAwaDJtLTQwIDFoMW00IDBoMW0xIDBoMW0yIDBoMW0xIDBoMW0xIDBoMW0xIDBoMm0zIDBoMW0yIDBoMW0yIDBoMW0xIDBoNG0xIDBoMW00IDBoMW0tNDUgMWgxbTEgMGg2bTIgMGgzbTIgMGgybTEgMGgxbTEgMGg2bTQgMGgxbTQgMGgxbTEgMGgxbTMgMGgxbS0zNyAxaDFtMSAwaDFtNSAwaDRtMSAwaDRtMiAwaDVtMiAwaDJtMiAwaDFtMiAwaDJtMSAwaDFtMSAwaDFtLTQ0IDFoMW0yIDBoNW0xIDBoMW0xIDBoMW0xMCAwaDJtMSAwaDdtMSAwaDFtMSAwaDFtMiAwaDFtMSAwaDJtMSAwaDFtLTQ0IDFoNG01IDBoMW01IDBoMm0xIDBoMm0zIDBoM20zIDBoMW0yIDBoMW0zIDBoMW0zIDBoMW0xIDBoMm0tNDQgMWgybTIgMGgxbTEgMGgxMm0xIDBoMW0xIDBoM20yIDBoMm0yIDBoM20yIDBoM20xIDBoMW0yIDBoMm0tNDMgMWgybTQgMGg0bTQgMGgxbTEgMGgzbTIgMGgzbTQgMGgxbTEgMGgxbTEgMGgzbTggMGgxbS00NSAxaDFtMyAwaDFtMSAwaDFtNiAwaDRtMSAwaDFtMSAwaDFtMSAwaDNtMSAwaDFtMiAwaDFtMSAwaDFtMSAwaDNtMSAwaDJtLTM2IDFoMm00IDBoMm0yIDBoMW02IDBoMm0xIDBoMm0zIDBoMm0yIDBoMW02IDBoMm0zIDBoMW0tNDUgMWgxbTEgMGg3bTEgMGgzbTQgMGgxbTIgMGgxMG0zIDBoMm0xIDBoOG0tNDMgMWgxbTEgMGgybTMgMGgybTEwIDBoMW0zIDBoMm0yIDBoMW0xIDBoMW00IDBoMm0zIDBoMm0xIDBoMm0tNDUgMWgxbTEgMGgzbTEgMGgxbTEgMGgxbTMgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgybTEgMGgybTEgMGgxbTIgMGgybTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbS00NSAxaDJtMiAwaDFtMyAwaDNtMSAwaDFtMiAwaDJtMSAwaDFtMSAwaDFtMyAwaDFtMSAwaDJtMSAwaDFtMSAwaDJtMSAwaDFtMSAwaDFtMyAwaDJtLTQxIDFoMm0xIDBoNW0yIDBoMW0yIDBoNG0yIDBoN20yIDBoM20yIDBoN20tNDAgMWgxbTIgMGgybTIgMGg0bTEgMGgxbTEgMGgzbTEgMGgxbTIgMGgxbTEgMGg0bTMgMGgzbTEgMGgxbTIgMGgxbTIgMGgxbTEgMGgxbS00MyAxaDFtNCAwaDJtMSAwaDFtMSAwaDFtMSAwaDFtMSAwaDFtMSAwaDNtMSAwaDFtMSAwaDNtMiAwaDJtNSAwaDFtMyAwaDNtLTQyIDFoM20xIDBoMm0yIDBoMm0yIDBoOW0yIDBoNW0xIDBoNW0xIDBoNW0yIDBoMW0tNDIgMWgzbTEgMGgzbTEgMGgybTEgMGgxbTEgMGgxbTEgMGg0bTQgMGgybTEgMGgxbTIgMGgxbTEgMGgybTEgMGgxbTIgMGgxbTEgMGgxbTEgMGgxbS00MyAxaDFtMyAwaDJtMSAwaDJtMSAwaDNtNCAwaDJtMSAwaDJtMSAwaDJtMiAwaDFtMSAwaDFtNCAwaDFtMSAwaDFtMiAwaDJtMiAwaDFtLTQ0IDFoMW0xIDBoMW0yIDBoNW0xIDBoM20xIDBoMm0xIDBoMW0xIDBoMW0yIDBoNG0zIDBoMW0zIDBoMm01IDBoMW0xIDBoMW0tNDQgMWgzbTIgMGgxbTIgMGgybTEgMGg1bTQgMGgxbTEgMGgxbTIgMGgybTIgMGgybTIgMGgybTIgMGgxbTMgMGgxbTEgMGgybS00NSAxaDFtMSAwaDFtMSAwaDFtMSAwaDFtMSAwaDFtMyAwaDJtMSAwaDJtMSAwaDZtMSAwaDFtMSAwaDJtNCAwaDFtMiAwaDJtMSAwaDFtMSAwaDJtLTQzIDFoMW0xIDBoMm0xIDBoMW0xIDBoMW0xIDBoMW0xIDBoM20yIDBoM20xIDBoMW0xIDBoMW00IDBoNG0xIDBoMW0zIDBoMm0xIDBoMW0yIDBoM20tNDEgMWgxbTEgMGgzbTIgMGgxbTIgMGgxbTEgMGgybTMgMGgxbTEgMGgxbTEgMGgxbTIgMGgxbTIgMGgxbTIgMGgzbTEgMGgxbTEgMGgxbTMgMGgxbS00NCAxaDRtMiAwaDJtMSAwaDFtNSAwaDFtMSAwaDJtMiAwaDJtMyAwaDFtNCAwaDFtMSAwaDJtMiAwaDJtMSAwaDFtMSAwaDFtLTQ0IDFoMW0yIDBoMm0xIDBoMW01IDBoMW0xIDBoMW0xIDBoMW0xIDBoMW0xIDBoOG0xIDBoMm0yIDBoMW0yIDBoNW0xIDBoMW0tMzUgMWgybTIgMGgxbTIgMGgybTIgMGgybTMgMGg0bTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgybTMgMGgxbTEgMGgybS00NCAxaDdtMSAwaDFtMyAwaDFtNCAwaDJtMSAwaDFtMSAwaDFtMSAwaDFtMSAwaDFtMSAwaDRtMiAwaDNtMSAwaDFtMSAwaDFtMiAwaDFtLTQ0IDFoMW01IDBoMW0xIDBoMm0xIDBoMW0xIDBoMW0zIDBoMW0yIDBoMW0zIDBoNW0xIDBoMW0xIDBoMm0yIDBoMW0zIDBoNG0tNDQgMWgxbTEgMGgzbTEgMGgxbTIgMGgxbTEgMGgxbTEgMGgzbTQgMGg1bTIgMGgxbTEgMGgxbTEgMGgzbTIgMGg3bTEgMGgxbS00NSAxaDFtMSAwaDNtMSAwaDFtMSAwaDhtMyAwaDJtMSAwaDJtNCAwaDJtMiAwaDZtNiAwaDFtLTQ1IDFoMW0xIDBoM20xIDBoMW0xIDBoMm0yIDBoMW05IDBoM20xIDBoMm00IDBoNW0yIDBoMW0xIDBoM20tNDQgMWgxbTUgMGgxbTIgMGgxbTEgMGgybTMgMGgybTMgMGgxbTEgMGg0bTQgMGgxbTMgMGg3bTIgMGgxbS00NSAxaDdtMSAwaDVtMSAwaDFtMSAwaDJtMyAwaDNtMyAwaDNtMSAwaDFtMSAwaDJtMSAwaDciLz48L3N2Zz4K" },
+  sol: { amt:"0.183714", unit:"SOL", chain:"Solana", addr:"7nSandboxPayDoNotSend11111111111111111111", qr:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjQgMTY0Ij48cGF0aCB0cmFuc2Zvcm09InNjYWxlKDQpIiBzdHJva2U9IiMwMDAiIGQ9Ik0yIDIuNWg3bTEgMGgxbTEgMGgxbTIgMGgybTEgMGgxbTEgMGgybTIgMGgxbTEgMGgxbTIgMGgxbTIgMGg3bS0zNyAxaDFtNSAwaDFtNiAwaDFtMSAwaDJtMSAwaDFtMSAwaDJtMyAwaDJtMyAwaDFtNSAwaDFtLTM3IDFoMW0xIDBoM20xIDBoMW00IDBoMW0xIDBoOW0xIDBoMW02IDBoMW0xIDBoM20xIDBoMW0tMzcgMWgxbTEgMGgzbTEgMGgxbTEgMGgybTEgMGgxbTIgMGgxbTQgMGgybTIgMGgybTEgMGgxbTMgMGgxbTEgMGgzbTEgMGgxbS0zNyAxaDFtMSAwaDNtMSAwaDFtMSAwaDFtMiAwaDFtMyAwaDFtNCAwaDJtMyAwaDFtMSAwaDJtMSAwaDFtMSAwaDNtMSAwaDFtLTM3IDFoMW01IDBoMW0xIDBoMW0zIDBoMm0xIDBoMW0yIDBoMm0xIDBoMm0xIDBoM20xIDBoMW0xIDBoMW01IDBoMW0tMzcgMWg3bTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGg3bS0yOSAxaDVtMSAwaDVtMyAwaDNtMSAwaDFtLTI3IDFoMW0zIDBoMW0xIDBoM200IDBoMm0zIDBoMm0yIDBoMW0xIDBoMW0xIDBoMm0xIDBoNW0yIDBoMW0tMzYgMWgxbTEgMGgybTIgMGgybTMgMGgxbTEgMGgxbTEgMGgxbTIgMGgybTQgMGgxbTEgMGgxbTQgMGgxbS0zMyAxaDFtMSAwaDVtMiAwaDRtMSAwaDFtMSAwaDJtMiAwaDJtNSAwaDJtMSAwaDJtMiAwaDFtLTMyIDFoM20xIDBoM20xIDBoMW0xIDBoMW0zIDBoMm0yIDBoMW0yIDBoMW0yIDBoOG0xIDBoMW0tMzcgMWgxbTIgMGgybTEgMGgzbTIgMGgxbTMgMGg1bTEgMGgzbTUgMGgzbTEgMGgzbS0zNSAxaDFtMSAwaDFtMSAwaDFtMSAwaDFtMiAwaDNtMiAwaDFtMSAwaDFtMiAwaDFtMiAwaDFtMiAwaDVtMSAwaDRtLTM1IDFoM20yIDBoMW0xIDBoMW0xIDBoMm0yIDBoMm0yIDBoMW0xIDBoNW0yIDBoMm0xIDBoNm0tMzYgMWgybTEgMGgybTIgMGgxbTEgMGgybTMgMGgzbTQgMGgxbTIgMGgxbTMgMGgxbTEgMGgybTIgMGgxbS0zMCAxaDJtMSAwaDFtMiAwaDFtMSAwaDJtMSAwaDFtMiAwaDJtMiAwaDJtMSAwaDFtMSAwaDRtMiAwaDFtMSAwaDFtLTM3IDFoMm0xIDBoMW0xIDBoMW0yIDBoMW0xIDBoMm0xIDBoMW00IDBoMm0xIDBoMm0xIDBoMm0xIDBoMW0xIDBoMW0yIDBoMW0tMzMgMWgxbTEgMGgzbTEgMGgxbTEgMGgybTIgMGgxbTIgMGgxbTEgMGgxbTEgMGgxbTMgMGgxbTMgMGgxbTEgMGgxbTEgMGgxbTIgMGgxbS0zNSAxaDZtOCAwaDEwbTIgMGgybTIgMGgxbTIgMGgybTEgMGgxbS0zNyAxaDFtNCAwaDNtMyAwaDNtMiAwaDNtMiAwaDJtMSAwaDFtMiAwaDFtMSAwaDJtMiAwaDJtMSAwaDFtLTM3IDFoMW0xIDBoMm0xIDBoMW0yIDBoMW0xIDBoMW0yIDBoM200IDBoMm0xIDBoMW0xIDBoMW0xIDBoMm0yIDBoMm0yIDBoMW0tMzYgMWgxbTEgMGgxbTEgMGgxbTEgMGgybTEgMGgxbTEgMGgxbTIgMGgybTEgMGgxbTIgMGgxbTIgMGgxbTEgMGgxbTEgMGgybTMgMGgxbTEgMGgybS0zNiAxaDFtNiAwaDJtMiAwaDNtMSAwaDRtMyAwaDFtMSAwaDFtMSAwaDJtNCAwaDFtMSAwaDFtLTM0IDFoMW0xIDBoMW0xIDBoMm0xIDBoMW0zIDBoMW0xIDBoMW0zIDBoMm0yIDBoM20xIDBoMW0xIDBoNG0yIDBoMW0xIDBoMW0tMzcgMWgzbTEgMGgybTMgMGgxbTEgMGgybTEgMGgxbTEgMGgxbTIgMGgybTMgMGgxbTIgMGgxbTQgMGgxbTIgMGgxbS0zNCAxaDFtMSAwaDRtMiAwaDJtMSAwaDJtMSAwaDJtMiAwaDJtMSAwaDFtMyAwaDNtMSAwaDJtMSAwaDFtLTMyIDFoMW0xIDBoMW0zIDBoMW0xIDBoMW01IDBoMm0yIDBoNG0xIDBoMm0zIDBoNW0tMzYgMWgzbTIgMGgybTIgMGgzbTIgMGg2bTEgMGgxbTIgMGgybTIgMGg3bTEgMGgxbS0yOSAxaDFtMSAwaDRtMSAwaDFtMSAwaDFtMiAwaDFtMSAwaDFtMiAwaDJtMSAwaDFtMyAwaDRtLTM2IDFoN20xIDBoMW0xIDBoNm0yIDBoMW0xIDBoN20xIDBoMW0xIDBoMW0xIDBoMm0xIDBoMW0tMzYgMWgxbTUgMGgxbTIgMGgxbTIgMGgxbTEgMGgzbTQgMGgxbTIgMGgxbTEgMGgxbTEgMGgxbTMgMGgxbTEgMGgxbS0zNSAxaDFtMSAwaDNtMSAwaDFtMSAwaDJtMSAwaDFtMSAwaDFtMiAwaDFtMiAwaDJtMiAwaDFtMiAwaDFtMSAwaDVtMSAwaDFtMSAwaDFtLTM3IDFoMW0xIDBoM20xIDBoMW0yIDBoMm0xIDBoM20zIDBoMm0yIDBoNG0yIDBoM201IDBoMW0tMzcgMWgxbTEgMGgzbTEgMGgxbTIgMGgxbTMgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGg0bTEgMGgxbTIgMGgybTMgMGgxbS0zNSAxaDFtNSAwaDFtMiAwaDRtMSAwaDhtMSAwaDFtNiAwaDJtMSAwaDNtLTM2IDFoN20xIDBoMW0yIDBoMm0zIDBoM20yIDBoMW0yIDBoMW0yIDBoMW0zIDBoNiIvPjwvc3ZnPgo=" },
+  eth: { amt:"0.008241", unit:"ETH", chain:"Ethereum", addr:"0xACsandbox00000000000000000000000000pay01", qr:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjQgMTY0Ij48cGF0aCB0cmFuc2Zvcm09InNjYWxlKDQpIiBzdHJva2U9IiMwMDAiIGQ9Ik0yIDIuNWg3bTEgMGg2bTEgMGgybTEgMGgybTIgMGgzbTIgMGgxbTIgMGg3bS0zNyAxaDFtNSAwaDFtMiAwaDFtMSAwaDFtMiAwaDJtMiAwaDFtMSAwaDFtMyAwaDFtMyAwaDFtMSAwaDFtNSAwaDFtLTM3IDFoMW0xIDBoM20xIDBoMW0yIDBoMW0xIDBoNW0xIDBoMW0xIDBoNW0zIDBoMW0yIDBoMW0xIDBoM20xIDBoMW0tMzcgMWgxbTEgMGgzbTEgMGgxbTEgMGgxbTYgMGgybTIgMGgybTEgMGg1bTEgMGgxbTEgMGgxbTEgMGgzbTEgMGgxbS0zNyAxaDFtMSAwaDNtMSAwaDFtMSAwaDNtMiAwaDJtMSAwaDFtMyAwaDFtMSAwaDNtMSAwaDNtMSAwaDFtMSAwaDNtMSAwaDFtLTM3IDFoMW01IDBoMW0xIDBoM200IDBoMW0yIDBoM20zIDBoM20xIDBoMW0xIDBoMW01IDBoMW0tMzcgMWg3bTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGg3bS0yOSAxaDRtMyAwaDFtMSAwaDJtMiAwaDNtMyAwaDJtLTI5IDFoMW0zIDBoMW0xIDBoM20xIDBoNm0yIDBoNG00IDBoMW0xIDBoNm0yIDBoMW0tMzYgMWgybTQgMGgxbTEgMGgxbTIgMGgzbTEgMGgxbTIgMGgybTEgMGg0bTEgMGgxbTEgMGgxbTEgMGgybS0zMCAxaDFtMSAwaDJtMSAwaDJtMSAwaDRtMSAwaDJtMyAwaDNtMiAwaDJtMSAwaDNtMSAwaDJtLTM1IDFoNG0xIDBoMW0zIDBoMm0xIDBoM20yIDBoMW0zIDBoM20zIDBoMW0xIDBoMm0yIDBoM20tMzUgMWgxbTEgMGgxbTEgMGgzbTEgMGgybTEgMGg4bTEgMGgxbTggMGgxbTIgMGg0bS0zNiAxaDRtMiAwaDFtMSAwaDJtMSAwaDFtMiAwaDFtMSAwaDFtMiAwaDFtMSAwaDhtMSAwaDJtMSAwaDJtLTM2IDFoMW0xIDBoMm0yIDBoMm0yIDBoMm0xIDBoMW0xIDBoMm0xIDBoMW0yIDBoM20xIDBoMW0xIDBoMW0yIDBoMm0xIDBoM20tMjkgMWgxbTEgMGg0bTIgMGgybTQgMGgzbTQgMGgxbTEgMGgzbTEgMGgybS0zNiAxaDFtMSAwaDJtMSAwaDNtMiAwaDFtMSAwaDFtMSAwaDFtMSAwaDFtMiAwaDNtNCAwaDFtMiAwaDJtMyAwaDFtMSAwaDFtLTM3IDFoMW0xIDBoMW0xIDBoMW0yIDBoM20xIDBoMW0xIDBoMW00IDBoM20xIDBoNG0xIDBoM20xIDBoMm0yIDBoMW0tMzEgMWgybTEgMGgxbTEgMGgzbTIgMGgxbTEgMGgxbTMgMGgzbTEgMGgxbTEgMGgxbTEgMGgxbTMgMGgybS0zMiAxaDNtMSAwaDVtMiAwaDRtMyAwaDNtMyAwaDFtMSAwaDFtNCAwaDFtLTM1IDFoMW0zIDBoMW0xIDBoMW0xIDBoMW0xIDBoMm0xIDBoMW0yIDBoNG0xIDBoMW02IDBoNG0xIDBoNG0tMzYgMWgxbTEgMGgxbTEgMGgxbTMgMGgxbTMgMGgxbTEgMGgxbTQgMGgxbTEgMGg4bTIgMGgybTEgMGgxbS0zNiAxaDJtMSAwaDFtMSAwaDNtMyAwaDNtMSAwaDNtMyAwaDNtMiAwaDJtMyAwaDFtMiAwaDJtLTM1IDFoMm0xIDBoMW02IDBoMm0yIDBoNG0yIDBoM200IDBoNG0yIDBoMm0tMzUgMWgxbTMgMGg2bTMgMGgxbTMgMGgybTEgMGgxbTQgMGgxbTEgMGgzbTIgMGgybTEgMGgxbS0zNyAxaDFtMiAwaDJtNiAwaDFtMiAwaDFtMSAwaDFtMyAwaDFtMSAwaDNtMiAwaDJtMiAwaDJtLTMwIDFoMW0yIDBoMW0xIDBoMm0xIDBoMW0yIDBoMW0xIDBoMm0zIDBoM20xIDBoN20xIDBoMm0tMzMgMWgxbTEgMGgxbTIgMGgxbTIgMGg1bTIgMGgxbTMgMGgzbTIgMGgybTEgMGgxbTIgMGgxbTEgMGgzbS0zNyAxaDNtMSAwaDNtMiAwaDFtMSAwaDJtMiAwaDVtMSAwaDFtNSAwaDZtMSAwaDFtLTI3IDFoMW00IDBoMW0xIDBoMW0xIDBoMW0yIDBoMW0xIDBoNG0yIDBoMW0zIDBoMW0yIDBoMW0tMzYgMWg3bTEgMGgybTIgMGgxbTIgMGgybTEgMGgxbTIgMGgzbTMgMGgybTEgMGgxbTEgMGgybTEgMGgxbS0zNiAxaDFtNSAwaDFtMyAwaDNtMiAwaDJtNCAwaDNtMiAwaDFtMSAwaDFtMyAwaDFtMSAwaDJtLTM2IDFoMW0xIDBoM20xIDBoMW0xIDBoMW00IDBoMW0yIDBoMW0yIDBoMW0xIDBoMW00IDBoMW0xIDBoNW0xIDBoMW0xIDBoMW0tMzcgMWgxbTEgMGgzbTEgMGgxbTUgMGgybTQgMGgxbTEgMGgxbTEgMGgzbTIgMGgxbTEgMGgybTUgMGgxbS0zNyAxaDFtMSAwaDNtMSAwaDFtNCAwaDFtMyAwaDFtMSAwaDFtMyAwaDNtMyAwaDNtMSAwaDFtMiAwaDFtLTM1IDFoMW01IDBoMW0zIDBoMW00IDBoM20zIDBoM20zIDBoMW0xIDBoMW0xIDBoMW0yIDBoMm0tMzYgMWg3bTEgMGgzbTEgMGgzbTEgMGg0bTEgMGgxbTQgMGgybTEgMGgybTEgMGg1Ii8+PC9zdmc+Cg==" }
 };
 let asset = "usdc", locked = false, holdOpen = true;
-function qrUrl(d){ return "https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=8&data="+encodeURIComponent(d); }
+const ovHoldDefault = document.getElementById("ov-hold").innerHTML;
+
+function routeId(){
+  return (location.hash || "#home").replace(/^#/, "").split(/[?#]/)[0].toLowerCase();
+}
+function setOn(el, on){
+  if (!el) return;
+  el.classList.toggle("on", !!on);
+}
 function setAsset(id){
+  if (!ASSETS[id]) return;
   asset = id;
   const p = ASSETS[id];
   document.getElementById("amt").textContent = p.amt+" "+p.unit;
   document.getElementById("chainl").textContent = p.chain+" · demo invoice";
   document.getElementById("paddr").textContent = p.addr;
-  document.getElementById("qr").src = qrUrl(p.payload);
-  ["usdc","sol","eth"].forEach(k => document.getElementById("t-"+k).classList.toggle("on", k===id));
+  const img = document.getElementById("qr");
+  img.src = p.qr;
+  img.alt = "Demo "+p.unit+" invoice QR — do not send real funds";
+  ["usdc","sol","eth"].forEach(k => setOn(document.getElementById("t-"+k), k===id));
 }
 function copyAmt(){ navigator.clipboard.writeText(ASSETS[asset].amt); }
 function copyAddr(){ navigator.clipboard.writeText(ASSETS[asset].addr); }
+function resetInbox(focus){
+  holdOpen = true;
+  document.getElementById("hold-card").hidden = false;
+  document.getElementById("hold-done").hidden = true;
+  document.getElementById("im").textContent = "";
+  document.getElementById("hold-badge").style.display = "";
+  document.getElementById("hold-badge").textContent = "1";
+  document.getElementById("wait-n").textContent = "1";
+  document.getElementById("ov-hold").innerHTML = ovHoldDefault;
+  if (focus) document.getElementById("hold-card").scrollIntoView({behavior:"smooth", block:"start"});
+}
 function decide(msg){
   holdOpen = false;
-  document.getElementById("hold-card").style.display = "none";
-  document.getElementById("hold-done").style.display = "block";
+  document.getElementById("hold-card").hidden = true;
+  document.getElementById("hold-done").hidden = false;
   document.getElementById("im").textContent = msg;
   document.getElementById("hold-badge").style.display = "none";
   document.getElementById("wait-n").textContent = "0";
@@ -348,30 +385,39 @@ function usePack(id){
     else { b.className="btn g"; b.textContent="Use on Alpha"; }
   });
 }
+function setLock(on){
+  locked = !!on;
+  setOn(document.getElementById("lock-screen"), locked);
+  document.getElementById("app-body").hidden = locked;
+  document.getElementById("app").classList.toggle("locked", locked);
+  const btn = document.getElementById("lock-btn");
+  if (btn){
+    btn.textContent = locked ? "Back to dashboard" : "Preview dashboard lock";
+    btn.setAttribute("aria-pressed", locked ? "true" : "false");
+  }
+}
 function toggleLock(force){
-  locked = typeof force === "boolean" ? force : !locked;
-  document.getElementById("lock-screen").style.display = locked ? "block" : "none";
-  document.getElementById("app-body").style.display = locked ? "none" : "block";
+  setLock(typeof force === "boolean" ? force : !locked);
 }
 function show(){
-  const id = (location.hash || "#home").slice(1).split("?")[0];
-  const homeIds = {home:1,audit:1,packs:1,pricing:1};
-  const appIds = {console:1,inbox:1,agents:1,policies:1,pay:1,docs:1};
-  const isHome = !id || homeIds[id];
-  document.getElementById("home").classList.toggle("on", isHome);
-  document.getElementById("app").classList.toggle("on", !isHome && appIds[id]);
-  if (!isHome && appIds[id]){
-    if (id === "pay") toggleLock(false);
-    ["console","inbox","agents","policies","pay","docs"].forEach(v => {
-      const pane = document.getElementById("v-"+v);
-      if (pane) pane.style.display = v===id ? "block" : "none";
-      const nav = document.getElementById("n-"+v);
-      if (nav) nav.classList.toggle("on", v===id);
+  const id = routeId();
+  const isApp = APP.indexOf(id) !== -1;
+  setOn(document.getElementById("home"), !isApp);
+  setOn(document.getElementById("app"), isApp);
+  document.querySelectorAll(".mobnav a").forEach(a => {
+    setOn(a, a.getAttribute("href") === "#"+id);
+  });
+  if (isApp){
+    if (id === "pay") setLock(false);
+    APP.forEach(v => {
+      setOn(document.getElementById("v-"+v), v===id);
+      setOn(document.getElementById("n-"+v), v===id);
     });
+    if (id === "inbox") resetInbox(false);
     if (id === "pay") setAsset(asset);
     window.scrollTo(0,0);
   } else {
-    if (id && id !== "home") {
+    if (id && id !== "home" && LANDING.has(id)) {
       const el = document.getElementById(id);
       if (el) setTimeout(() => el.scrollIntoView({behavior:"smooth",block:"start"}), 20);
     } else window.scrollTo(0,0);
@@ -390,5 +436,6 @@ document.getElementById("audit-form").onsubmit = function(e){
     "<div class='row'><span>aborted · over Treasury daily cap</span><b>$9,100</b></div>";
 };
 </script>
+
 </body>
 </html>

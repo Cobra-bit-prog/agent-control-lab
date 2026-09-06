@@ -1,583 +1,250 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Agent Control — sandbox tour</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-<style>
-:root{--bg:#eef3f8;--paper:#fff;--elev:#f6f8fb;--ink:#12263f;--muted:#5b6b80;--subtle:#8a96a8;--line:#dce4ee;--coral:#e85d4c;--navy:#1e3a5f;--ok:#1f7a4c;--warn:#c47b16;--bad:#c2413b;--chart:#5b8def}
-*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Instrument Sans",Segoe UI,system-ui,sans-serif}
-a{color:var(--navy)}button,a.btn,[role=button]{cursor:pointer}
-.banner{position:sticky;top:0;z-index:30;background:#12263f;color:#fff;text-align:center;font-size:13px;padding:9px 14px}.banner a{color:#ffd7c8}.banner b{letter-spacing:.08em}
-.wrap{max-width:1140px;margin:0 auto;padding:0 20px}
-header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 0;flex-wrap:wrap}
-.brand{display:flex;align-items:center;gap:10px;font-weight:700;text-decoration:none;color:var(--ink)}
-.mark{width:32px;height:32px;border-radius:9px;background:var(--navy);color:#fff;display:grid;place-items:center;overflow:hidden}
-.mark svg{display:block}
-nav a{margin-left:16px;text-decoration:none;color:var(--muted);font-size:14px;font-weight:500}nav a:hover{color:var(--ink)}
-nav .btn{margin-left:16px}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border-radius:999px;padding:10px 16px;border:1px solid var(--coral);background:var(--coral);color:#fff;text-decoration:none;font-weight:600;font-size:14px}
-.btn.g{background:#fff;color:var(--navy);border-color:var(--line)}.btn.b{background:var(--bad);border-color:var(--bad)}
-.btn.tiny{padding:6px 10px;font-size:12px;border-radius:10px}
-.btn.ghostb{background:#fff;color:var(--bad);border-color:#f0c7c2}
-h1{font-size:clamp(34px,4.8vw,56px);line-height:1.06;letter-spacing:-.035em;margin:0 0 14px;color:#12263f}
-h2{font-size:28px;letter-spacing:-.02em;margin:0 0 8px}
-.k{color:var(--coral);font-size:12px;letter-spacing:.16em;text-transform:uppercase;font-weight:700}
-.m{color:var(--muted)}.s{color:var(--subtle);font-size:12px}
-.limits{color:#3a4d63;font-size:13px;font-weight:600;margin:8px 0 0}
-.hint{display:block;margin-top:4px;color:#3a4d63;font-size:12px;line-height:1.35;font-weight:500}
-#v-inbox,#v-pay{max-width:640px}#v-docs{max-width:720px}
-.hero{display:grid;gap:32px;padding:8px 0 28px;background:radial-gradient(720px 380px at 88% 8%,rgb(255 236 228/.9),transparent 58%)}
-.card{background:var(--paper);border:1px solid var(--line);border-radius:20px;box-shadow:0 16px 40px -20px rgb(18 38 63/.18)}
-.pad{padding:20px}.g{display:grid;gap:14px}
-@media(min-width:800px){.g4{grid-template-columns:repeat(4,1fr)}.g2{grid-template-columns:1fr 1fr}}
-@media(min-width:900px){.g3{grid-template-columns:repeat(3,1fr)}}
-.st{background:var(--elev);border-radius:14px;padding:14px}.st b{display:block;font-size:22px}
-.hold{background:#fff4e8;border:1px solid #f3d5b5;border-radius:14px;padding:14px}
-.row{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid var(--line)}
-.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 10px;font-size:12px;display:inline-block;margin:4px 4px 0 0}
-.price{font-size:32px;font-weight:700}
-.shell{display:grid;min-height:100vh}@media(min-width:900px){.shell{grid-template-columns:220px 1fr}}
-.side{background:#12263f;color:#e8eef6;padding:20px 14px}.side a{display:block;color:#c5d0de;text-decoration:none;padding:10px 12px;border-radius:10px}
-.side a:hover,.side a.on{background:#1e3a5f;color:#fff}
-.main{padding:24px;position:relative;min-height:70vh}.warnbox{background:#fff4e5;border:1px solid #efc48a;padding:14px;border-radius:14px}
-.bigamt{font-size:34px;font-weight:700}.badge{display:inline-block;background:#dcfce7;color:#166534;border-radius:999px;padding:2px 8px;font-size:12px}
-.wbadge{background:#fff4e8;color:var(--warn)}
-section{padding:18px 0 40px;scroll-margin-top:52px}footer{padding:24px 0 48px;color:var(--muted);font-size:13px}
-#home,#audit,#packs,#pricing{scroll-margin-top:52px}
-.page{display:none !important}.page.on{display:block !important}
-.view{display:none !important}.view.on{display:block !important}
-[hidden]{display:none !important}
-.bars{display:flex;align-items:flex-end;gap:8px;height:112px;margin-top:16px}
-.bars i{flex:1;background:var(--chart);border-radius:3px;display:block}
-.faq details{border-top:1px solid var(--line);padding:12px 0}.faq summary{cursor:pointer;font-weight:600}
-.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace;font-size:13px;word-break:break-all}
-pre.mono{background:#12263f;color:#e8eef6;padding:16px;border-radius:16px;overflow:auto;font-size:12px;line-height:1.6}
-.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
-.tabs button{border-radius:999px;border:1px solid var(--line);background:var(--elev);padding:8px 14px;font:inherit}
-.tabs button.on{background:var(--coral);color:#fff;border-color:var(--coral)}
-.lock{display:none !important;max-width:520px;margin:48px auto;text-align:center;background:#fff;border:1px solid var(--line);border-radius:20px;padding:36px 24px;box-shadow:0 16px 40px -20px rgb(18 38 63/.18)}
-.lock.on{display:block !important}
-.appbar{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:12px 20px;background:#fff;border-bottom:1px solid var(--line);flex-wrap:wrap}
-.locked .appbar{background:#fff4e5}
-.agent{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;border-top:1px solid var(--line);flex-wrap:wrap}
-.bar{height:8px;background:var(--elev);border-radius:999px;overflow:hidden;margin-top:10px}.bar span{display:block;height:100%;background:var(--chart)}
-input,select{width:100%;border:1px solid var(--line);border-radius:12px;padding:10px 12px;font:inherit;background:#fff}
-.ok{color:var(--ok)}
-.mobnav{display:flex;gap:8px;overflow:auto;padding:8px 16px;border-bottom:1px solid var(--line)}
-.mobnav a{flex:0 0 auto;border:1px solid var(--line);border-radius:999px;padding:8px 12px;text-decoration:none;color:var(--muted);font-size:13px}
-.mobnav a.on{background:var(--coral);color:#fff;border-color:var(--coral)}
-@media(min-width:900px){.mobnav{display:none}}
-.tag{display:inline-flex;align-items:center;background:#e7eef7;color:var(--navy);border-radius:999px;padding:5px 12px;font-size:12px;font-weight:600;margin:0 0 16px}
-.lede{font-size:18px;line-height:1.45;max-width:34ch}
-.vrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
-.vchip{display:inline-flex;align-items:center;gap:7px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:7px 11px;font-size:12.5px;color:var(--ink);white-space:nowrap;box-shadow:0 1px 0 rgb(18 38 63/.04)}
-.vchip i{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:10px;font-style:normal;font-weight:700;flex:none;line-height:1}
-.vchip .go{background:#dcfce7;color:#166534}.vchip .stop{background:#fde8e6;color:#c2413b;font-size:7px;letter-spacing:-1px}.vchip .key{background:#e8eef6;color:var(--navy)}
-.preview{padding:22px;box-shadow:0 28px 56px -28px rgb(18 38 63/.32)}
-.phead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
-.phead .price{margin:2px 0 8px}
-.chart{display:grid;grid-template-columns:40px 1fr;gap:8px;margin-top:14px;align-items:stretch}
-.ylabels{display:flex;flex-direction:column;justify-content:space-between;color:var(--subtle);font-size:11px;text-align:right;padding:2px 0}
-.xlabels{display:flex;justify-content:space-between;color:var(--subtle);font-size:11px;margin-top:6px}
-.preview .bars{height:96px;margin-top:0}
-.phead .chip{margin:0}
-.side .brand{display:flex;align-items:center}
-.review{display:flex;align-items:center;gap:12px;background:#fdecea;border:1px solid #f6c9c2;border-radius:14px;padding:12px 14px;margin-top:16px}
-.review .ico{width:32px;height:32px;border-radius:50%;background:var(--coral);color:#fff;display:grid;place-items:center;font-weight:700;flex:none}
-.review strong{color:#c2413b;display:block;font-size:13px}
-.review p{margin:2px 0 0;font-size:13px;color:var(--ink);line-height:1.35}
-.review .btn{margin-left:auto;flex:none}
-.pfoot{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
-.pfoot p{margin:2px 0 0;font-size:12px;color:var(--muted);line-height:1.35}
-.pfoot b{display:flex;align-items:center;gap:6px;color:var(--ink);font-size:13px}
-.mods{padding:4px 0 36px}
-.mod{padding:22px;min-height:100%}
-.mod h3{display:flex;align-items:center;gap:10px;margin:0 0 8px;font-size:18px}
-.mod h3 a{color:inherit;text-decoration:none}
-.mod h3 a:hover{color:var(--coral)}
-.n{width:26px;height:26px;border-radius:50%;background:#e8eef6;color:var(--navy);display:inline-grid;place-items:center;font-size:12px;font-weight:700;flex:none}
-.count{margin-left:auto;background:var(--coral);color:#fff;border-radius:999px;min-width:22px;height:22px;display:inline-grid;place-items:center;font-size:11px;font-weight:700;padding:0 6px}
-.miniwrap{overflow:auto;margin-top:12px}
-.mini{width:100%;border-collapse:collapse;font-size:12px}
-.mini th{color:var(--subtle);font-weight:500;text-align:left;padding:8px 6px;border-bottom:1px solid var(--line)}
-.mini td{padding:9px 6px;border-top:1px solid var(--line);white-space:nowrap}
-.mini .mono{font-size:11px}
-.rs{font-weight:600}.rs.ok{color:var(--ok)}.rs.pause{color:var(--warn)}.rs.abort{color:var(--bad)}
-.csv{display:inline-flex;align-items:center;gap:6px;margin-top:12px;font-size:13px;font-weight:600;color:var(--navy);background:none;border:0;padding:0;font-family:inherit;cursor:pointer}
-.csv:hover{color:var(--coral)}
-.waiting{font-size:12px;font-weight:600;color:var(--muted);margin:12px 0 0}
-.req{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line);flex-wrap:wrap}
-.req b{display:block;font-size:13px}
-.acts{display:flex;gap:6px;flex:none}
-.more{display:inline-block;margin-top:12px;font-size:13px;font-weight:600;text-decoration:none}
-.paybox{display:grid;gap:12px;margin-top:14px}
-@media(min-width:520px){.paybox{grid-template-columns:1fr 1fr;align-items:stretch}}
-.assets{display:flex;flex-direction:column;gap:8px}
-.achip{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:12px;padding:9px 12px;text-decoration:none;color:var(--ink);font-size:13px;font-weight:600;background:#fff}
-.achip:hover{border-color:#c5d4e6}
-.dot{width:10px;height:10px;border-radius:50%;flex:none}
-.dot.usdc{background:#2775ca}.dot.sol{background:#14f195}.dot.eth{background:#627eea}
-.qrbox{background:var(--elev);border:1px solid var(--line);border-radius:14px;padding:12px;text-align:center;text-decoration:none;color:var(--muted);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font-size:12px}
-.qrbox svg{background:#fff;border-radius:8px;padding:6px;border:1px solid var(--line)}
-.fundnote{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:12px;color:var(--ok);font-weight:600}
-@media(min-width:960px){.hero{grid-template-columns:1.14fr .96fr;align-items:center}.vrow{flex-wrap:nowrap}}
-@media(max-width:700px){.review{flex-wrap:wrap}.review .btn{margin-left:0}.pfoot{grid-template-columns:1fr}}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agent Control — Keep your agents on a leash you can see</title>
+  <meta name="description" content="Don’t let your AI spend your money. Paste a wallet. Watch a pay wait. Sellers can require a leash." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f3f0e8;
+      --paper: #fbfaf6;
+      --ink: #141517;
+      --muted: #5c5c66;
+      --line: #ddd6c8;
+      --navy: #141517;
+      --gold: #d4a054;
+      --ok: #1f7a4d;
+      --bad: #b42318;
+      --desk: #0b0c0e;
+      --desk-fg: #f2f2f3;
+      --desk-muted: #a1a1aa;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 "Instrument Sans", system-ui, sans-serif; }
+    h1, h2 { font-family: "Instrument Serif", Georgia, serif; font-weight: 400; letter-spacing: -0.03em; }
+    h1 { font-size: clamp(34px, 6vw, 56px); line-height: 1.06; margin: 0 0 12px; }
+    h2 { font-size: clamp(26px, 4vw, 36px); margin: 0 0 8px; }
+    a { color: inherit; }
+    button { font: inherit; cursor: pointer; }
+    .banner { background: var(--navy); color: #fff; text-align: center; font-size: 13px; padding: 8px 14px; }
+    .banner a { color: #f3e6c6; }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 0 20px; }
+    header.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 0; flex-wrap: wrap; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; text-decoration: none; }
+    .mark { width: 28px; height: 28px; border-radius: 8px; background: var(--navy); color: #fff; display: grid; place-items: center; font-size: 13px; }
+    nav a { margin-left: 14px; text-decoration: none; color: var(--muted); font-size: 14px; font-weight: 600; }
+    nav a.on, nav a:hover { color: var(--ink); }
+    .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; border-radius: 999px; padding: 10px 16px; border: 1px solid var(--navy); background: var(--navy); color: #fff; text-decoration: none; font-weight: 600; font-size: 14px; }
+    .btn.ghost { background: transparent; color: var(--navy); }
+    .btn.gold { background: var(--gold); border-color: var(--gold); color: #141517; }
+    .btn.bad { background: var(--bad); border-color: var(--bad); color: #fff; }
+    .kicker { color: var(--muted); font-size: 12px; letter-spacing: .16em; text-transform: uppercase; font-weight: 700; }
+    .muted { color: var(--muted); }
+    .hero { padding: 12px 0 8px; }
+    .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 18px 0 20px; }
+    .tabs a { text-decoration: none; color: var(--muted); border: 1px solid var(--line); background: var(--paper); border-radius: 999px; padding: 10px 14px; font-size: 14px; font-weight: 600; }
+    .tabs a.on { color: #fff; background: var(--navy); border-color: var(--navy); }
+    .card { background: var(--paper); border: 1px solid var(--line); border-radius: 20px; padding: 20px; }
+    .desk { background: var(--desk); color: var(--desk-fg); border-radius: 20px; padding: 20px; }
+    .desk .muted { color: var(--desk-muted); }
+    .desk .kicker { color: var(--gold); }
+    .desk h2 { color: var(--desk-fg); }
+    .grid { display: grid; gap: 12px; }
+    @media (min-width: 800px) {
+      .g4 { grid-template-columns: repeat(4, 1fr); }
+      .g2 { grid-template-columns: 1fr 1fr; }
+      .verdict-form { grid-template-columns: 1fr auto auto; }
+    }
+    .stat { background: #efe9dc; border-radius: 14px; padding: 14px; }
+    .stat b { display: block; font-size: 22px; margin-top: 4px; }
+    .desk .stat { background: #141517; }
+    input, select { width: 100%; border: 1px solid var(--line); border-radius: 12px; padding: 12px; font: inherit; background: #fff; }
+    label { display: block; font-size: 13px; color: var(--muted); margin: 10px 0 6px; }
+    .row { display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 10px 0; border-top: 1px solid var(--line); }
+    .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 13px; }
+    .mono-log { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 13px; line-height: 1.6; color: #d4d4d8; white-space: pre-wrap; margin-top: 14px; }
+    .pill { display: inline-block; border-radius: 999px; padding: 2px 8px; font-size: 12px; font-weight: 700; }
+    .pill.fine { background: #dcfce7; color: #166534; }
+    .pill.wait { background: #fff7ed; color: #9a3412; }
+    .pill.stop { background: #fee2e2; color: #991b1b; }
+    .warn { color: #9a3412; }
+    .bad { color: var(--bad); }
+    .json { background: #0b0c0e; color: #e5e7eb; border-radius: 12px; padding: 14px; font-family: "IBM Plex Mono", monospace; font-size: 12px; overflow: auto; min-height: 160px; }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+    .note { font-size: 12px; color: var(--muted); }
+    footer { padding: 28px 0 48px; color: var(--muted); font-size: 13px; }
+  </style>
 </head>
 <body>
-<div class="banner"><b>SANDBOX · NOT LIVE</b> — Do not send real funds. Live product is <a href="https://agent-control.net">agent-control.net</a>. No KYC. No card.</div>
+  <div class="banner">Sandbox front door — demo numbers, no real funds. Live product: <a href="https://agent-control.net">agent-control.net</a> (untouched)</div>
+  <div class="wrap">
+    <header class="top">
+      <a class="brand" href="#verdict"><span class="mark">⌘</span> Agent Control</a>
+      <nav>
+        <a href="#verdict" class="on" data-tab="verdict">Verdict</a>
+        <a href="#catch" data-tab="catch">Catch</a>
+        <a href="#gate" data-tab="gate">Gate</a>
+        <a class="btn" href="https://agent-control.net">Try it free</a>
+      </nav>
+    </header>
 
-<div id="home" class="page on">
-<div class="wrap">
-<header class="top">
-  <a class="brand" href="#home"><span class="mark" aria-hidden="true"><svg viewBox="0 0 32 32" width="32" height="32"><rect width="32" height="32" rx="9" fill="#1e3a5f"/><path d="M16 7.2l7 2.5v6.1c0 3.8-2.8 6.6-7 8.1-4.2-1.5-7-4.3-7-8.1V9.7l7-2.5z" fill="none" stroke="#fff" stroke-width="1.6"/><circle cx="16" cy="15.2" r="1.6" fill="#fff"/><path d="M16 16.7v2.8" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></svg></span> Agent Control</a>
-  <nav>
-    <a href="#docs">Docs</a>
-    <a href="#pricing">Pricing</a>
-    <a href="mailto:support@agent-control.net">Contact</a>
-    <a class="btn" href="#console">Try free</a>
-  </nav>
-</header>
-<section class="hero">
-  <div>
-    <p class="tag">Sky Ledger × Operator</p>
-    <h1>See every send before it happens.</h1>
-    <p class="m lede">Policy caps and a yes or no before your agent signs. You keep the keys.</p>
-    <p style="margin-top:22px">
-      <a class="btn" href="#console">Start free trial <span aria-hidden="true">→</span></a>
-    </p>
-    <p class="s" style="margin:10px 0 0">1-day (24 hour) trial, then pay on-chain. No card. No KYC.</p>
-    <div class="vrow">
-      <span class="vchip"><i class="go" aria-hidden="true">✓</i> Within policy = auto</span>
-      <span class="vchip"><i class="stop" aria-hidden="true">❚❚</i> Outside policy = pause</span>
-      <span class="vchip"><i class="key" aria-hidden="true">🔑</i> Keys stay with you</span>
-    </div>
-  </div>
-  <div class="card preview">
-    <div class="phead">
-      <div>
-        <p class="m" style="margin:0">Spent today</p>
-        <p class="price">$1,240</p>
-        <span class="badge">Within policy</span>
-      </div>
-      <span class="chip">Today ▾</span>
-    </div>
-    <div class="chart" aria-hidden="true">
-      <div class="ylabels"><span>$1.5k</span><span>$1k</span><span>$500</span><span>$0</span></div>
-      <div>
-        <div class="bars"><i style="height:18%"></i><i style="height:28%"></i><i style="height:46%"></i><i style="height:62%"></i><i style="height:54%"></i><i style="height:78%"></i><i style="height:60%"></i><i style="height:42%"></i><i style="height:36%"></i><i style="height:22%"></i></div>
-        <div class="xlabels"><span>12 AM</span><span>6 AM</span><span>12 PM</span><span>6 PM</span><span>12 AM</span></div>
-      </div>
-    </div>
-    <div class="review">
-      <div class="ico" aria-hidden="true">!</div>
-      <div>
-        <strong>Review alert</strong>
-        <p>Transfer paused<br>$2,400 to unknown address</p>
-      </div>
-      <a class="btn" href="#inbox">Review</a>
-    </div>
-    <div class="pfoot">
-      <div>
-        <b><span aria-hidden="true">🛡</span> Policy</b>
-        <p>Daily cap $5,000<br>Per-tx cap $2,000</p>
-      </div>
-      <div>
-        <b><span aria-hidden="true">✓</span> Keys</b>
-        <p>Held by you<br>Skip the hook, we cannot stop a send</p>
-      </div>
-    </div>
-  </div>
-</section>
+    <section class="hero">
+      <p class="kicker">First session · sandbox</p>
+      <h1>Keep your agents on a leash you can see.</h1>
+      <p class="muted">Don’t let your AI spend your money. Three doors. No signup first.</p>
+    </section>
 
-<section class="mods" aria-label="Product modules">
-  <div class="g g3">
-    <article class="card mod">
-      <h3><span class="n">1</span><a href="#audit">Ghost audit</a></h3>
-      <p class="m" style="margin:0">Replay the last sends in a read-only view. Understand what happened, verify policy, and export for your records.</p>
-      <div class="miniwrap">
-        <table class="mini">
-          <thead><tr><th>Time</th><th>To</th><th>Amount</th><th>Result</th></tr></thead>
-          <tbody>
-            <tr><td>May 20, 10:42 AM</td><td class="mono">0x7f3a…b9c1</td><td>$350.00</td><td class="rs ok">Allowed</td></tr>
-            <tr><td>May 20, 10:28 AM</td><td class="mono">7GdK…Lr9e</td><td>$1,200.00</td><td class="rs pause">Paused</td></tr>
-            <tr><td>May 20, 10:15 AM</td><td class="mono">0x91aa…c0de</td><td>$780.00</td><td class="rs abort">Aborted</td></tr>
-          </tbody>
-        </table>
+    <div class="tabs">
+      <a href="#verdict" class="on" id="tab-verdict">1 Verdict</a>
+      <a href="#catch" id="tab-catch">2 Catch</a>
+      <a href="#gate" id="tab-gate">3 Gate</a>
+    </div>
+
+    <section id="verdict" class="card" style="margin-bottom:24px">
+      <p class="kicker">Magnet 1</p>
+      <h2>Paste the wallet. See what would not have left.</h2>
+      <p class="muted">Read only. Demo pack: Research. Any address shows the locked sample until live lookup is wired.</p>
+      <form id="verdict-form" class="grid verdict-form" style="margin-top:14px">
+        <input id="addr" placeholder="0x… or Solana address" value="0xTreasuryDemo0001" />
+        <button class="btn ghost" type="button" id="sample">Show sample</button>
+        <button class="btn" type="submit">Verdict</button>
+      </form>
+      <div id="verdict-out" style="margin-top:16px"></div>
+    </section>
+
+    <section id="catch" class="desk" style="margin-bottom:24px">
+      <p class="kicker">Magnet 2 · DEMO · NO REAL FUNDS</p>
+      <h2>Watch an agent try to take $12.</h2>
+      <p class="muted">Research · $80 / pay · $400 / day · first-time destination waits.</p>
+      <div id="catch-log" class="mono-log">Say Go.</div>
+      <div class="actions" id="catch-actions">
+        <button class="btn gold" type="button" id="go">Go</button>
       </div>
-      <button class="csv" type="button" onclick="exportAuditCsv()">📄 Export CSV</button>
-    </article>
-    <article class="card mod">
-      <h3><span class="n">2</span><a href="#inbox">Approval inbox</a><span class="count">3</span></h3>
-      <p class="m" style="margin:0">Your agent requests, your call. Approve once, set limits, or block. Holds work only if the agent honors the hook.</p>
-      <p class="waiting">Waiting for you</p>
-      <div class="req">
-        <div><b>Transfer $2,400</b><span class="s">To unknown address</span></div>
-        <div class="acts"><a class="btn tiny" href="#inbox">Allow once</a><a class="btn tiny ghostb" href="#inbox">Block</a></div>
-      </div>
-      <div class="req">
-        <div><b>Transfer $850</b><span class="s">To vendor wallet</span></div>
-        <div class="acts"><a class="btn tiny" href="#inbox">Allow once</a><a class="btn tiny ghostb" href="#inbox">Block</a></div>
-      </div>
-      <div class="req">
-        <div><b>Approve spend $1,000</b><span class="s">For AI research</span></div>
-        <div class="acts"><a class="btn tiny" href="#inbox">Allow once</a><a class="btn tiny ghostb" href="#inbox">Block</a></div>
-      </div>
-      <a class="more" href="#inbox">View all requests →</a>
-    </article>
-    <article class="card mod">
-      <h3><span class="n">3</span><a href="#pay">On-chain pay</a></h3>
-      <p class="m" style="margin:0">How you pay Agent Control for Starter or Pro. USDC, SOL, or ETH — scan the QR or copy. Unique amount; the watcher unlocks the console. No card. No KYC.</p>
-      <div class="paybox">
+    </section>
+
+    <section id="gate" class="card" style="margin-bottom:28px">
+      <p class="kicker">Magnet 5 · sellers</p>
+      <h2>Pays only if the agent is leashed.</h2>
+      <p class="muted">You keep settlement. We attest the leash. Verify is SANDBOX — not a live production route.</p>
+      <div class="grid g2" style="margin-top:16px">
         <div>
-          <p class="s" style="margin:0 0 8px">Pay with</p>
-          <div class="assets">
-            <a class="achip" href="#pay"><span class="dot usdc"></span> USDC</a>
-            <a class="achip" href="#pay"><span class="dot sol"></span> SOL</a>
-            <a class="achip" href="#pay"><span class="dot eth"></span> ETH</a>
-          </div>
+          <label>What you sell</label>
+          <input id="sell" placeholder="e.g. $0.02 research call" />
+          <label>How agents pay today</label>
+          <select id="rail">
+            <option>x402</option>
+            <option>API key</option>
+            <option>Invoice</option>
+            <option>Other</option>
+          </select>
+          <button class="btn" type="button" id="badge-btn" style="margin-top:14px">Show badge + verify</button>
         </div>
-        <a class="qrbox" href="#pay">
-          <svg width="108" height="108" viewBox="0 0 29 29" aria-hidden="true"><rect width="29" height="29" fill="#fff"/><g fill="#12263f"><rect x="2" y="2" width="7" height="7"/><rect x="3" y="3" width="5" height="5" fill="#fff"/><rect x="4" y="4" width="3" height="3"/><rect x="20" y="2" width="7" height="7"/><rect x="21" y="3" width="5" height="5" fill="#fff"/><rect x="22" y="4" width="3" height="3"/><rect x="2" y="20" width="7" height="7"/><rect x="3" y="21" width="5" height="5" fill="#fff"/><rect x="4" y="22" width="3" height="3"/><rect x="11" y="2" width="2" height="2"/><rect x="14" y="3" width="2" height="2"/><rect x="17" y="2" width="2" height="3"/><rect x="11" y="6" width="3" height="2"/><rect x="16" y="6" width="2" height="2"/><rect x="2" y="11" width="2" height="3"/><rect x="5" y="12" width="3" height="2"/><rect x="10" y="10" width="3" height="3"/><rect x="14" y="11" width="2" height="2"/><rect x="17" y="10" width="2" height="3"/><rect x="20" y="11" width="3" height="2"/><rect x="24" y="10" width="3" height="2"/><rect x="11" y="15" width="2" height="2"/><rect x="14" y="14" width="4" height="2"/><rect x="20" y="14" width="2" height="3"/><rect x="24" y="15" width="3" height="2"/><rect x="2" y="16" width="3" height="2"/><rect x="7" y="16" width="2" height="2"/><rect x="11" y="19" width="2" height="3"/><rect x="14" y="18" width="2" height="2"/><rect x="17" y="19" width="3" height="2"/><rect x="21" y="18" width="2" height="2"/><rect x="24" y="20" width="3" height="2"/><rect x="11" y="24" width="3" height="3"/><rect x="16" y="23" width="2" height="2"/><rect x="19" y="24" width="3" height="3"/><rect x="24" y="24" width="3" height="3"/></g></svg>
-          <span>Scan QR<br>or copy amount</span>
-        </a>
-      </div>
-      <p class="fundnote"><span aria-hidden="true">✓</span> Watcher matches the unique amount and unlocks the console. Demo only — do not send real funds.</p>
-    </article>
-  </div>
-</section>
-
-<section id="audit">
-  <p class="k">The demo that sells</p>
-  <h2>What would we have blocked?</h2>
-  <p class="m">Paste any address, or replay the sample. Treasury pack against outgoing native and USDC.</p>
-  <div class="card pad" style="margin-top:14px">
-    <form id="audit-form" class="g" style="grid-template-columns:1fr 140px auto;gap:10px">
-      <input id="addr" placeholder="0x… or Solana address" value="0xTreasuryDemo0001"/>
-      <select><option>base</option><option>ethereum</option><option>solana</option></select>
-      <button class="btn" type="submit">Replay last sends</button>
-    </form>
-    <div id="audit-out"></div>
-  </div>
-</section>
-
-<section id="packs">
-  <p class="k">Packaging</p>
-  <h2>One-tap policy packs</h2>
-  <p class="m">Operators should not invent limits.</p>
-  <div class="g g4" style="margin-top:14px">
-    <div class="card pad"><b>Treasury bot</b><p class="m">Tight single-send cap. New addresses wait for you.</p><p class="limits">Daily $5,000 · max $500 · first-time lock</p></div>
-    <div class="card pad"><b>Research agent</b><p class="m">Small experiments. Almost everything should be cheap.</p><p class="limits">Daily $400 · max $80</p></div>
-    <div class="card pad"><b>Payroll</b><p class="m">Larger known pays. Unknown destinations still hold.</p><p class="limits">Daily $25,000 · max $8,000</p></div>
-    <div class="card pad"><b>Only these addresses</b><p class="m">You name up to three destinations. Everything else waits.</p><p class="limits">Allowlist only</p></div>
-  </div>
-</section>
-
-<section id="pricing">
-  <h2>1-day trial, then on-chain.</h2>
-  <p class="m">24 hours free. No card. No KYC. USDC on Solana, or native SOL / ETH. Unique amount so the watcher can match.</p>
-  <div class="g g4" style="margin-top:14px">
-    <div class="card pad"><p class="m">Trial</p><p class="price">1 day</p><p class="m">24 hours, then the dashboard locks.</p><p><a class="btn g" href="#console">Open tour</a></p></div>
-    <div class="card pad"><p class="m">Starter</p><p class="price">$29</p><p class="m">Small fleet.</p><p><a class="btn" href="#pay">Pay USDC</a></p></div>
-    <div class="card pad"><p class="m">Pro</p><p class="price">$49</p><p class="m">Priority alerts.</p><p><a class="btn g" href="#pay">Pay on-chain</a></p></div>
-    <div class="card pad"><p class="m">Team</p><p class="price">$149</p><p class="m">Builder + Approver.</p><p><a class="btn g" href="#pay">Pay on-chain</a></p></div>
-  </div>
-</section>
-
-<section class="faq">
-  <h2>Questions operators ask</h2>
-  <details open><summary>Do you hold my keys?</summary><p class="m">No. We return allow, hold, or abort. You still sign. If the agent skips the hook, we cannot physically stop the chain.</p></details>
-  <details><summary>How do I pay? Is there KYC?</summary><p class="m">Pay Agent Control for Starter or Pro. No KYC and no card. Default is USDC. Scan the QR or copy amount + address. Do not send from an exchange — they drop the memo / unique dust.</p></details>
-  <details><summary>After the 1-day trial?</summary><p class="m">After 24 hours the dashboard locks until you pay. The hook returns abort; a leftover agent that honors it cannot keep spending. Renewal reminder 7 days before month end. No autopay.</p></details>
-  <details><summary>Hold vs block?</summary><p class="m">Hold waits for a human: Allow once, Always allow, or Block. Block is a hard no (paused agent or denylist).</p></details>
-</section>
-<footer>SANDBOX · NOT LIVE · Not a custodian · Not insurance · Do not send real funds · <a href="mailto:support@agent-control.net">support@agent-control.net</a></footer>
-</div>
-</div>
-
-<div id="app" class="page">
-  <div class="shell">
-    <aside class="side">
-      <a class="brand" href="#home" style="color:#fff;margin-bottom:8px"><span class="mark" aria-hidden="true"><svg viewBox="0 0 32 32" width="32" height="32"><rect width="32" height="32" rx="9" fill="#1e3a5f"/><path d="M16 7.2l7 2.5v6.1c0 3.8-2.8 6.6-7 8.1-4.2-1.5-7-4.3-7-8.1V9.7l7-2.5z" fill="none" stroke="#fff" stroke-width="1.6"/><circle cx="16" cy="15.2" r="1.6" fill="#fff"/><path d="M16 16.7v2.8" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></svg></span> Agent Control</a>
-      <p class="s" style="padding:0 12px 8px;letter-spacing:.14em;text-transform:uppercase">Sandbox tour</p>
-      <a id="n-console" href="#console">Overview</a>
-      <a id="n-inbox" href="#inbox">Inbox <span class="badge" id="hold-badge">1</span></a>
-      <a id="n-agents" href="#agents">Agents</a>
-      <a id="n-policies" href="#policies">Policies</a>
-      <a id="n-pay" href="#pay">Checkout</a>
-      <a id="n-docs" href="#docs">Docs / SDK</a>
-      <a href="#home">← Landing</a>
-    </aside>
-    <div>
-      <div class="appbar" id="appbar">
-        <span class="m">1-day trial (24 hours) · <b>18 hours left</b></span>
-        <button class="btn g" id="lock-btn" type="button" onclick="toggleLock()">Preview dashboard lock</button>
-      </div>
-      <div class="mobnav">
-        <a href="#console">Overview</a><a href="#inbox">Inbox</a><a href="#agents">Agents</a><a href="#policies">Policies</a><a href="#pay">Pay</a><a href="#docs">Docs</a>
-      </div>
-      <div class="main">
-        <div id="lock-screen" class="lock">
-          <p class="k">Trial ended</p>
-          <h2>Dashboard locked</h2>
-          <p class="m">The 1-day (24 hour) trial is up. Monitoring pauses and the hook returns abort until you pay on-chain. No card. No KYC. This is a sandbox preview — do not send real funds.</p>
-          <p>
-            <a class="btn" href="#pay" onclick="setLock(false)">Pay Starter $29 USDC</a>
-            <button class="btn g" type="button" onclick="setLock(false)">Back to dashboard</button>
-          </p>
-        </div>
-        <div id="app-body">
-          <div id="v-console" class="view">
-            <h2>Overview</h2>
-            <p class="m">Sample fleet — three wallets, one send waiting on a human. Figures below are demo data, not a live wallet.</p>
-            <div class="g g4" style="margin-top:14px">
-              <div class="st"><span class="m">Agent wallets</span><b>3</b></div>
-              <div class="st"><span class="m">Moved in last 24h</span><b>$1,640</b><span class="hint">Transfer volume we saw yesterday</span></div>
-              <div class="st"><span class="m">On-chain balance</span><b>$48,210</b><span class="hint">Current holdings, not volume</span></div>
-              <div class="st"><span class="m">Waiting</span><b id="wait-n">1</b><span class="hint">Holds that need a human</span></div>
-            </div>
-            <div class="g g2" style="margin-top:16px">
-              <div class="card pad">
-                <p class="m">Spent today (toward daily caps)</p>
-                <p class="price">$1,240 <span class="badge">within policy</span></p>
-                <p class="hint">Today’s cap usage — not the same as 24h volume ($1,640) or on-chain balance ($48,210).</p>
-                <div class="bars"><i style="height:22%"></i><i style="height:34%"></i><i style="height:48%"></i><i style="height:52%"></i><i style="height:76%"></i><i style="height:58%"></i><i style="height:44%"></i><i style="height:31%"></i><i style="height:18%"></i></div>
-              </div>
-              <div class="card pad">
-                <p class="m">Needs a human</p>
-                <div id="ov-hold">
-                  <p><b>$2,400 paused</b></p>
-                  <p class="m">Trade Agent Alpha: first-time destination. 4× usual Tuesday.</p>
-                  <a class="btn" href="#inbox">Open inbox</a>
-                </div>
-              </div>
-            </div>
-            <div class="card pad" style="margin-top:16px">
-              <div class="agent"><div><b>Trade Agent Alpha</b><div class="s">Base · Waiting on you</div></div><span>$1,140 / $2,000</span></div>
-              <div class="agent"><div><b>Treasury bot</b><div class="s">Ethereum · Within cap</div></div><span>$420 / $5,000</span></div>
-              <div class="agent"><div><b>Payroll runner</b><div class="s">Solana · Allowlist only</div></div><span>$80 / $25,000</span></div>
-            </div>
-          </div>
-
-          <div id="v-inbox" class="view">
-            <h2>Waiting for you</h2>
-            <p class="m">Off-policy sends pause here if the agent honors the hook. It must not sign until you decide, or the request expires (10 minutes).</p>
-            <div class="card pad" id="hold-card" style="margin-top:16px">
-              <span class="badge wbadge">Waiting for you</span>
-              <p style="margin:8px 0 0"><b>Trade Agent Alpha · Base</b></p>
-              <p class="mono m">0x91c4…6d5e</p>
-              <p class="m">First-time destination. Treasury pack holds new addresses. 8 minutes left.</p>
-              <p class="price">$2,400</p>
-              <p>
-                <button class="btn" type="button" onclick="decide('Allowed once. The agent may sign this send.')">Allow once</button>
-                <button class="btn g" type="button" onclick="decide('Always allow. This address is now on the allowlist.')">Always allow this address</button>
-                <button class="btn b" type="button" onclick="decide('Blocked. The agent must not sign.')">Block</button>
-              </p>
-            </div>
-            <div class="card pad" id="hold-done" hidden style="margin-top:16px;text-align:center">
-              <p id="im"></p>
-              <p class="m">Inbox clear. Nothing waiting. The next unknown destination will pause here.</p>
-              <p><button class="btn g" type="button" onclick="resetInbox(true)">Restore sample hold</button></p>
-            </div>
-          </div>
-
-          <div id="v-agents" class="view">
-            <h2>Agents</h2>
-            <p class="m">3 wallets on this sandbox tour.</p>
-            <div class="card pad" style="margin-top:14px">
-              <b>Trade Agent Alpha</b><div class="s">Base · 0x7a3b…f701</div>
-              <div class="bar"><span style="width:57%"></span></div>
-              <p class="m">$1,140 of $2,000 today</p>
-            </div>
-            <div class="card pad" style="margin-top:12px">
-              <b>Treasury bot</b><div class="s">Ethereum · 0x8f1e…f702</div>
-              <div class="bar"><span style="width:8%"></span></div>
-              <p class="m">$420 of $5,000 today</p>
-            </div>
-            <div class="card pad" style="margin-top:12px">
-              <b>Payroll runner</b><div class="s">Solana · H3xK…WxYa</div>
-              <div class="bar"><span style="width:1%"></span></div>
-              <p class="m">$80 of $25,000 today</p>
-            </div>
-          </div>
-
-          <div id="v-policies" class="view">
-            <h2>Policies</h2>
-            <p class="m">One tap. Applied to Trade Agent Alpha in this tour.</p>
-            <div class="g g2" style="margin-top:14px">
-              <div class="card pad" id="pk-treasury"><b>Treasury bot</b><p class="m">Tight cap. New addresses wait.</p><button class="btn" type="button" onclick="usePack('treasury')">On Alpha</button></div>
-              <div class="card pad" id="pk-research"><b>Research agent</b><p class="m">Small experiments.</p><button class="btn g" type="button" onclick="usePack('research')">Use on Alpha</button></div>
-              <div class="card pad" id="pk-payroll"><b>Payroll</b><p class="m">Known pays. Unknown holds.</p><button class="btn g" type="button" onclick="usePack('payroll')">Use on Alpha</button></div>
-              <div class="card pad" id="pk-allow"><b>Allowlist only</b><p class="m">Name up to three destinations.</p><button class="btn g" type="button" onclick="usePack('allow')">Use on Alpha</button></div>
-            </div>
-          </div>
-
-          <div id="v-pay" class="view">
-            <p class="k">No KYC · no card · no exchange send</p>
-            <h2>Starter $29 · pay on-chain</h2>
-            <p class="m">Unique dust so the watcher can match this invoice. Scan or copy. No Phantom prompt in the page.</p>
-            <div class="tabs">
-              <button type="button" class="on" id="t-usdc" onclick="setAsset('usdc')">USDC</button>
-              <button type="button" id="t-sol" onclick="setAsset('sol')">SOL</button>
-              <button type="button" id="t-eth" onclick="setAsset('eth')">ETH</button>
-            </div>
-            <div class="card pad" style="text-align:center">
-              <img id="qr" width="220" height="220" alt="Demo payment QR — do not send real funds" style="border-radius:12px;border:1px solid var(--line);background:#fff;padding:8px"/>
-              <p class="bigamt" id="amt">29.000137 USDC</p>
-              <p class="s" id="chainl">Solana · demo invoice</p>
-              <p class="mono" id="paddr"></p>
-              <p>
-                <button class="btn" type="button" onclick="copyAmt()">Copy amount</button>
-                <button class="btn g" type="button" onclick="copyAddr()">Copy address</button>
-              </p>
-            </div>
-            <div class="warnbox" style="margin-top:14px"><b>Do not send from an exchange.</b> They strip the memo / unique amount. Use a wallet you control. This sandbox invoice is demo-only — live pay is on agent-control.net.</div>
-            <p><button class="btn g" type="button" onclick="document.getElementById('paid').textContent='Paid (simulated). Invoice emailed. Plan active for 30 days. No autopay.'">Simulate watcher: paid</button></p>
-            <p id="paid" class="ok"></p>
-          </div>
-
-          <div id="v-docs" class="view">
-            <h2>Wire the check. Honor must_abort.</h2>
-            <p class="m">If you skip the hook, we cannot stop the chain.</p>
-            <pre class="mono">const r = await fetch("https://agent-control.net/api/v1/check", {
-  method: "POST",
-  headers: { Authorization: "Bearer " + key, "Content-Type": "application/json" },
-  body: JSON.stringify({ to, value_usd: 2400, chain: "base" })
-});
-const j = await r.json();
-if (j.must_abort) throw new Error(j.reasons?.[0] || "blocked");
-if (j.decision === "hold") await poll(j.approval_id);</pre>
-          </div>
+        <div>
+          <p class="muted" id="badge-line">Badge appears here.</p>
+          <pre class="json" id="verify-json">{ "leashed": true, "note": "sandbox example" }</pre>
         </div>
       </div>
-    </div>
+    </section>
+
+    <p style="margin-bottom:8px">
+      <a class="btn" href="https://agent-control.net">Try it free</a>
+      <span class="note"> · 24h on the live product · no card · no KYC · you keep the keys</span>
+    </p>
+    <footer>Sandbox only. Do not send real funds here. If the agent skips the check, Inbox cannot stop a pay.</footer>
   </div>
-</div>
+  <script>
+    const sample = {
+      outbound: 4180, n: 4, fine: 2, wait: 1, stop: 1, saved: 3180,
+      rows: [
+        ["Tue 10:42", "0x7f3a…b9c1", 350, "fine", "Seen twice this week"],
+        ["Tue 10:28", "7GdK…Lr9e", 2400, "wait", "First-time address"],
+        ["Tue 10:15", "0x91aa…c0de", 780, "stop", "Over $500 and new"],
+        ["Mon 18:02", "0xa1c0…11e4", 650, "fine", "Allowlisted counterparty"]
+      ]
+    };
 
-<script>
-const LANDING = new Set(["", "home", "audit", "packs", "pricing"]);
-const APP = ["console", "inbox", "agents", "policies", "pay", "docs"];
-const ASSETS = {
-  usdc: { amt:"29.000137", unit:"USDC", chain:"Solana", addr:"7nSandboxPayDoNotSend11111111111111111111", qr:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxOTYgMTk2Ij48cGF0aCB0cmFuc2Zvcm09InNjYWxlKDQpIiBzdHJva2U9IiMwMDAiIGQ9Ik0yIDIuNWg3bTEgMGgzbTUgMGgybTUgMGgzbTIgMGgzbTEgMGgxbTMgMGgxbTEgMGg3bS00NSAxaDFtNSAwaDFtMSAwaDFtMyAwaDFtMiAwaDFtMSAwaDFtOSAwaDFtMSAwaDJtMSAwaDFtMiAwaDFtMiAwaDFtNSAwaDFtLTQ1IDFoMW0xIDBoM20xIDBoMW0yIDBoMW0zIDBoMW0yIDBoM20xIDBoMW0xIDBoMW0yIDBoMm01IDBoMW0yIDBoMW0yIDBoMW0xIDBoM20xIDBoMW0tNDUgMWgxbTEgMGgzbTEgMGgxbTEgMGgxbTIgMGgxbTEgMGgxbTEgMGgxbTEgMGg0bTEgMGg1bTIgMGgybTQgMGgybTEgMGgxbTEgMGgzbTEgMGgxbS00NSAxaDFtMSAwaDNtMSAwaDFtMyAwaDFtMSAwaDFtMSAwaDFtMyAwaDFtMSAwaDhtMSAwaDFtMSAwaDFtMSAwaDRtMSAwaDFtMSAwaDNtMSAwaDFtLTQ1IDFoMW01IDBoMW0yIDBoMm01IDBoMW0yIDBoMm0zIDBoMW0zIDBoM203IDBoMW01IDBoMW0tNDUgMWg3bTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGg3bS0zNyAxaDJtMSAwaDFtMyAwaDNtMiAwaDFtMyAwaDNtMyAwaDJtMSAwaDNtLTM2IDFoMW0xIDBoMm0xIDBoM20xIDBoNG0xIDBoM20yIDBoN20xIDBoM20xIDBoMW0zIDBoMm0xIDBoMW0yIDBoMW0xIDBoMm0tNDUgMWgybTUgMGgybTIgMGgxbTEgMGgxbTQgMGgybTQgMGgybTMgMGgybTEgMGgxbTIgMGgzbTEgMGgybTEgMGgxbTEgMGgxbS00NSAxaDJtMiAwaDRtMSAwaDFtMSAwaDFtMSAwaDJtMiAwaDFtMiAwaDJtNiAwaDJtMSAwaDFtMSAwaDFtNSAwaDJtMiAwaDJtLTQwIDFoMW00IDBoMW0xIDBoMW0yIDBoMW0xIDBoMW0xIDBoMW0xIDBoMm0zIDBoMW0yIDBoMW0yIDBoMW0xIDBoNG0xIDBoMW00IDBoMW0tNDUgMWgxbTEgMGg2bTIgMGgzbTIgMGgybTEgMGgxbTEgMGg2bTQgMGgxbTQgMGgxbTEgMGgxbTMgMGgxbS0zNyAxaDFtMSAwaDFtNSAwaDRtMSAwaDRtMiAwaDVtMiAwaDJtMiAwaDFtMiAwaDJtMSAwaDFtMSAwaDFtLTQ0IDFoMW0yIDBoNW0xIDBoMW0xIDBoMW0xMCAwaDJtMSAwaDdtMSAwaDFtMSAwaDFtMiAwaDFtMSAwaDJtMSAwaDFtLTQ0IDFoNG01IDBoMW01IDBoMm0xIDBoMm0zIDBoM20zIDBoMW0yIDBoMW0zIDBoMW0zIDBoMW0xIDBoMm0tNDQgMWgybTIgMGgxbTEgMGgxMm0xIDBoMW0xIDBoM20yIDBoMm0yIDBoM20yIDBoM20xIDBoMW0yIDBoMm0tNDMgMWgybTQgMGg0bTQgMGgxbTEgMGgzbTIgMGgzbTQgMGgxbTEgMGgxbTEgMGgzbTggMGgxbS00NSAxaDFtMyAwaDFtMSAwaDFtNiAwaDRtMSAwaDFtMSAwaDFtMSAwaDNtMSAwaDFtMiAwaDFtMSAwaDFtMSAwaDNtMSAwaDJtLTM2IDFoMm00IDBoMm0yIDBoMW02IDBoMm0xIDBoMm0zIDBoMm0yIDBoMW02IDBoMm0zIDBoMW0tNDUgMWgxbTEgMGg3bTEgMGgzbTQgMGgxbTIgMGgxMG0zIDBoMm0xIDBoOG0tNDMgMWgxbTEgMGgybTMgMGgybTEwIDBoMW0zIDBoMm0yIDBoMW0xIDBoMW00IDBoMm0zIDBoMm0xIDBoMm0tNDUgMWgxbTEgMGgzbTEgMGgxbTEgMGgxbTMgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgybTEgMGgybTEgMGgxbTIgMGgybTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbS00NSAxaDJtMiAwaDFtMyAwaDNtMSAwaDFtMiAwaDJtMSAwaDFtMSAwaDFtMyAwaDFtMSAwaDJtMSAwaDFtMSAwaDJtMSAwaDFtMSAwaDFtMyAwaDJtLTQxIDFoMm0xIDBoNW0yIDBoMW0yIDBoNG0yIDBoN20yIDBoM20yIDBoN20tNDAgMWgxbTIgMGgybTIgMGg0bTEgMGgxbTEgMGgzbTEgMGgxbTIgMGgxbTEgMGg0bTMgMGgzbTEgMGgxbTIgMGgxbTIgMGgxbTEgMGgxbS00MyAxaDFtNCAwaDJtMSAwaDFtMSAwaDFtMSAwaDFtMSAwaDFtMSAwaDNtMSAwaDFtMSAwaDNtMiAwaDJtNSAwaDFtMyAwaDNtLTQyIDFoM20xIDBoMm0yIDBoMm0yIDBoOW0yIDBoNW0xIDBoNW0xIDBoNW0yIDBoMW0tNDIgMWgzbTEgMGgzbTEgMGgybTEgMGgxbTEgMGgxbTEgMGg0bTQgMGgybTEgMGgxbTIgMGgxbTEgMGgybTEgMGgxbTIgMGgxbTEgMGgxbTEgMGgxbS00MyAxaDFtMyAwaDJtMSAwaDJtMSAwaDNtNCAwaDJtMSAwaDJtMSAwaDJtMiAwaDFtMSAwaDFtNCAwaDFtMSAwaDFtMiAwaDJtMiAwaDFtLTQ0IDFoMW0xIDBoMW0yIDBoNW0xIDBoM20xIDBoMm0xIDBoMW0xIDBoMW0yIDBoNG0zIDBoMW0zIDBoMm01IDBoMW0xIDBoMW0tNDQgMWgzbTIgMGgxbTIgMGgybTEgMGg1bTQgMGgxbTEgMGgxbTIgMGgybTIgMGgybTIgMGgybTIgMGgxbTMgMGgxbTEgMGgybS00NSAxaDFtMSAwaDFtMSAwaDFtMSAwaDFtMSAwaDFtMyAwaDJtMSAwaDJtMSAwaDZtMSAwaDFtMSAwaDJtNCAwaDFtMiAwaDJtMSAwaDFtMSAwaDJtLTQzIDFoMW0xIDBoMm0xIDBoMW0xIDBoMW0xIDBoMW0xIDBoM20yIDBoM20xIDBoMW0xIDBoMW00IDBoNG0xIDBoMW0zIDBoMm0xIDBoMW0yIDBoM20tNDEgMWgxbTEgMGgzbTIgMGgxbTIgMGgxbTEgMGgybTMgMGgxbTEgMGgxbTEgMGgxbTIgMGgxbTIgMGgxbTIgMGgzbTEgMGgxbTEgMGgxbTMgMGgxbS00NCAxaDRtMiAwaDJtMSAwaDFtNSAwaDFtMSAwaDJtMiAwaDJtMyAwaDFtNCAwaDFtMSAwaDJtMiAwaDJtMSAwaDFtMSAwaDFtLTQ0IDFoMW0yIDBoMm0xIDBoMW01IDBoMW0xIDBoMW0xIDBoMW0xIDBoMW0xIDBoOG0xIDBoMm0yIDBoMW0yIDBoNW0xIDBoMW0tMzUgMWgybTIgMGgxbTIgMGgybTIgMGgybTMgMGg0bTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgybTMgMGgxbTEgMGgybS00NCAxaDdtMSAwaDFtMyAwaDFtNCAwaDJtMSAwaDFtMSAwaDFtMSAwaDFtMSAwaDFtMSAwaDRtMiAwaDNtMSAwaDFtMSAwaDFtMiAwaDFtLTQ0IDFoMW01IDBoMW0xIDBoMm0xIDBoMW0xIDBoMW0zIDBoMW0yIDBoMW0zIDBoNW0xIDBoMW0xIDBoMm0yIDBoMW0zIDBoNG0tNDQgMWgxbTEgMGgzbTEgMGgxbTIgMGgxbTEgMGgxbTEgMGgzbTQgMGg1bTIgMGgxbTEgMGgxbTEgMGgzbTIgMGg3bTEgMGgxbS00NSAxaDFtMSAwaDNtMSAwaDFtMSAwaDhtMyAwaDJtMSAwaDJtNCAwaDJtMiAwaDZtNiAwaDFtLTQ1IDFoMW0xIDBoM20xIDBoMW0xIDBoMm0yIDBoMW05IDBoM20xIDBoMm00IDBoNW0yIDBoMW0xIDBoM20tNDQgMWgxbTUgMGgxbTIgMGgxbTEgMGgybTMgMGgybTMgMGgxbTEgMGg0bTQgMGgxbTMgMGg3bTIgMGgxbS00NSAxaDdtMSAwaDVtMSAwaDFtMSAwaDJtMyAwaDNtMyAwaDNtMSAwaDFtMSAwaDJtMSAwaDciLz48L3N2Zz4K" },
-  sol: { amt:"0.183714", unit:"SOL", chain:"Solana", addr:"7nSandboxPayDoNotSend11111111111111111111", qr:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjQgMTY0Ij48cGF0aCB0cmFuc2Zvcm09InNjYWxlKDQpIiBzdHJva2U9IiMwMDAiIGQ9Ik0yIDIuNWg3bTEgMGgxbTEgMGgxbTIgMGgybTEgMGgxbTEgMGgybTIgMGgxbTEgMGgxbTIgMGgxbTIgMGg3bS0zNyAxaDFtNSAwaDFtNiAwaDFtMSAwaDJtMSAwaDFtMSAwaDJtMyAwaDJtMyAwaDFtNSAwaDFtLTM3IDFoMW0xIDBoM20xIDBoMW00IDBoMW0xIDBoOW0xIDBoMW02IDBoMW0xIDBoM20xIDBoMW0tMzcgMWgxbTEgMGgzbTEgMGgxbTEgMGgybTEgMGgxbTIgMGgxbTQgMGgybTIgMGgybTEgMGgxbTMgMGgxbTEgMGgzbTEgMGgxbS0zNyAxaDFtMSAwaDNtMSAwaDFtMSAwaDFtMiAwaDFtMyAwaDFtNCAwaDJtMyAwaDFtMSAwaDJtMSAwaDFtMSAwaDNtMSAwaDFtLTM3IDFoMW01IDBoMW0xIDBoMW0zIDBoMm0xIDBoMW0yIDBoMm0xIDBoMm0xIDBoM20xIDBoMW0xIDBoMW01IDBoMW0tMzcgMWg3bTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGg3bS0yOSAxaDVtMSAwaDVtMyAwaDNtMSAwaDFtLTI3IDFoMW0zIDBoMW0xIDBoM200IDBoMm0zIDBoMm0yIDBoMW0xIDBoMW0xIDBoMm0xIDBoNW0yIDBoMW0tMzYgMWgxbTEgMGgybTIgMGgybTMgMGgxbTEgMGgxbTEgMGgxbTIgMGgybTQgMGgxbTEgMGgxbTQgMGgxbS0zMyAxaDFtMSAwaDVtMiAwaDRtMSAwaDFtMSAwaDJtMiAwaDJtNSAwaDJtMSAwaDJtMiAwaDFtLTMyIDFoM20xIDBoM20xIDBoMW0xIDBoMW0zIDBoMm0yIDBoMW0yIDBoMW0yIDBoOG0xIDBoMW0tMzcgMWgxbTIgMGgybTEgMGgzbTIgMGgxbTMgMGg1bTEgMGgzbTUgMGgzbTEgMGgzbS0zNSAxaDFtMSAwaDFtMSAwaDFtMSAwaDFtMiAwaDNtMiAwaDFtMSAwaDFtMiAwaDFtMiAwaDFtMiAwaDVtMSAwaDRtLTM1IDFoM20yIDBoMW0xIDBoMW0xIDBoMm0yIDBoMm0yIDBoMW0xIDBoNW0yIDBoMm0xIDBoNm0tMzYgMWgybTEgMGgybTIgMGgxbTEgMGgybTMgMGgzbTQgMGgxbTIgMGgxbTMgMGgxbTEgMGgybTIgMGgxbS0zMCAxaDJtMSAwaDFtMiAwaDFtMSAwaDJtMSAwaDFtMiAwaDJtMiAwaDJtMSAwaDFtMSAwaDRtMiAwaDFtMSAwaDFtLTM3IDFoMm0xIDBoMW0xIDBoMW0yIDBoMW0xIDBoMm0xIDBoMW00IDBoMm0xIDBoMm0xIDBoMm0xIDBoMW0xIDBoMW0yIDBoMW0tMzMgMWgxbTEgMGgzbTEgMGgxbTEgMGgybTIgMGgxbTIgMGgxbTEgMGgxbTEgMGgxbTMgMGgxbTMgMGgxbTEgMGgxbTEgMGgxbTIgMGgxbS0zNSAxaDZtOCAwaDEwbTIgMGgybTIgMGgxbTIgMGgybTEgMGgxbS0zNyAxaDFtNCAwaDNtMyAwaDNtMiAwaDNtMiAwaDJtMSAwaDFtMiAwaDFtMSAwaDJtMiAwaDJtMSAwaDFtLTM3IDFoMW0xIDBoMm0xIDBoMW0yIDBoMW0xIDBoMW0yIDBoM200IDBoMm0xIDBoMW0xIDBoMW0xIDBoMm0yIDBoMm0yIDBoMW0tMzYgMWgxbTEgMGgxbTEgMGgxbTEgMGgybTEgMGgxbTEgMGgxbTIgMGgybTEgMGgxbTIgMGgxbTIgMGgxbTEgMGgxbTEgMGgybTMgMGgxbTEgMGgybS0zNiAxaDFtNiAwaDJtMiAwaDNtMSAwaDRtMyAwaDFtMSAwaDFtMSAwaDJtNCAwaDFtMSAwaDFtLTM0IDFoMW0xIDBoMW0xIDBoMm0xIDBoMW0zIDBoMW0xIDBoMW0zIDBoMm0yIDBoM20xIDBoMW0xIDBoNG0yIDBoMW0xIDBoMW0tMzcgMWgzbTEgMGgybTMgMGgxbTEgMGgybTEgMGgxbTEgMGgxbTIgMGgybTMgMGgxbTIgMGgxbTQgMGgxbTIgMGgxbS0zNCAxaDFtMSAwaDRtMiAwaDJtMSAwaDJtMSAwaDJtMiAwaDJtMSAwaDFtMyAwaDNtMSAwaDJtMSAwaDFtLTMyIDFoMW0xIDBoMW0zIDBoMW0xIDBoMW01IDBoMm0yIDBoNG0xIDBoMm0zIDBoNW0tMzYgMWgzbTIgMGgybTIgMGgzbTIgMGg2bTEgMGgxbTIgMGgybTIgMGg3bTEgMGgxbS0yOSAxaDFtMSAwaDRtMSAwaDFtMSAwaDFtMiAwaDFtMSAwaDFtMiAwaDJtMSAwaDFtMyAwaDRtLTM2IDFoN20xIDBoMW0xIDBoNm0yIDBoMW0xIDBoN20xIDBoMW0xIDBoMW0xIDBoMm0xIDBoMW0tMzYgMWgxbTUgMGgxbTIgMGgxbTIgMGgxbTEgMGgzbTQgMGgxbTIgMGgxbTEgMGgxbTEgMGgxbTMgMGgxbTEgMGgxbS0zNSAxaDFtMSAwaDNtMSAwaDFtMSAwaDJtMSAwaDFtMSAwaDFtMiAwaDFtMiAwaDJtMiAwaDFtMiAwaDFtMSAwaDVtMSAwaDFtMSAwaDFtLTM3IDFoMW0xIDBoM20xIDBoMW0yIDBoMm0xIDBoM20zIDBoMm0yIDBoNG0yIDBoM201IDBoMW0tMzcgMWgxbTEgMGgzbTEgMGgxbTIgMGgxbTMgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGg0bTEgMGgxbTIgMGgybTMgMGgxbS0zNSAxaDFtNSAwaDFtMiAwaDRtMSAwaDhtMSAwaDFtNiAwaDJtMSAwaDNtLTM2IDFoN20xIDBoMW0yIDBoMm0zIDBoM20yIDBoMW0yIDBoMW0yIDBoMW0zIDBoNiIvPjwvc3ZnPgo=" },
-  eth: { amt:"0.008241", unit:"ETH", chain:"Ethereum", addr:"0xACsandbox00000000000000000000000000pay01", qr:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjQgMTY0Ij48cGF0aCB0cmFuc2Zvcm09InNjYWxlKDQpIiBzdHJva2U9IiMwMDAiIGQ9Ik0yIDIuNWg3bTEgMGg2bTEgMGgybTEgMGgybTIgMGgzbTIgMGgxbTIgMGg3bS0zNyAxaDFtNSAwaDFtMiAwaDFtMSAwaDFtMiAwaDJtMiAwaDFtMSAwaDFtMyAwaDFtMyAwaDFtMSAwaDFtNSAwaDFtLTM3IDFoMW0xIDBoM20xIDBoMW0yIDBoMW0xIDBoNW0xIDBoMW0xIDBoNW0zIDBoMW0yIDBoMW0xIDBoM20xIDBoMW0tMzcgMWgxbTEgMGgzbTEgMGgxbTEgMGgxbTYgMGgybTIgMGgybTEgMGg1bTEgMGgxbTEgMGgxbTEgMGgzbTEgMGgxbS0zNyAxaDFtMSAwaDNtMSAwaDFtMSAwaDNtMiAwaDJtMSAwaDFtMyAwaDFtMSAwaDNtMSAwaDNtMSAwaDFtMSAwaDNtMSAwaDFtLTM3IDFoMW01IDBoMW0xIDBoM200IDBoMW0yIDBoM20zIDBoM20xIDBoMW0xIDBoMW01IDBoMW0tMzcgMWg3bTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGg3bS0yOSAxaDRtMyAwaDFtMSAwaDJtMiAwaDNtMyAwaDJtLTI5IDFoMW0zIDBoMW0xIDBoM20xIDBoNm0yIDBoNG00IDBoMW0xIDBoNm0yIDBoMW0tMzYgMWgybTQgMGgxbTEgMGgxbTIgMGgzbTEgMGgxbTIgMGgybTEgMGg0bTEgMGgxbTEgMGgxbTEgMGgybS0zMCAxaDFtMSAwaDJtMSAwaDJtMSAwaDRtMSAwaDJtMyAwaDNtMiAwaDJtMSAwaDNtMSAwaDJtLTM1IDFoNG0xIDBoMW0zIDBoMm0xIDBoM20yIDBoMW0zIDBoM20zIDBoMW0xIDBoMm0yIDBoM20tMzUgMWgxbTEgMGgxbTEgMGgzbTEgMGgybTEgMGg4bTEgMGgxbTggMGgxbTIgMGg0bS0zNiAxaDRtMiAwaDFtMSAwaDJtMSAwaDFtMiAwaDFtMSAwaDFtMiAwaDFtMSAwaDhtMSAwaDJtMSAwaDJtLTM2IDFoMW0xIDBoMm0yIDBoMm0yIDBoMm0xIDBoMW0xIDBoMm0xIDBoMW0yIDBoM20xIDBoMW0xIDBoMW0yIDBoMm0xIDBoM20tMjkgMWgxbTEgMGg0bTIgMGgybTQgMGgzbTQgMGgxbTEgMGgzbTEgMGgybS0zNiAxaDFtMSAwaDJtMSAwaDNtMiAwaDFtMSAwaDFtMSAwaDFtMSAwaDFtMiAwaDNtNCAwaDFtMiAwaDJtMyAwaDFtMSAwaDFtLTM3IDFoMW0xIDBoMW0xIDBoMW0yIDBoM20xIDBoMW0xIDBoMW00IDBoM20xIDBoNG0xIDBoM20xIDBoMm0yIDBoMW0tMzEgMWgybTEgMGgxbTEgMGgzbTIgMGgxbTEgMGgxbTMgMGgzbTEgMGgxbTEgMGgxbTEgMGgxbTMgMGgybS0zMiAxaDNtMSAwaDVtMiAwaDRtMyAwaDNtMyAwaDFtMSAwaDFtNCAwaDFtLTM1IDFoMW0zIDBoMW0xIDBoMW0xIDBoMW0xIDBoMm0xIDBoMW0yIDBoNG0xIDBoMW02IDBoNG0xIDBoNG0tMzYgMWgxbTEgMGgxbTEgMGgxbTMgMGgxbTMgMGgxbTEgMGgxbTQgMGgxbTEgMGg4bTIgMGgybTEgMGgxbS0zNiAxaDJtMSAwaDFtMSAwaDNtMyAwaDNtMSAwaDNtMyAwaDNtMiAwaDJtMyAwaDFtMiAwaDJtLTM1IDFoMm0xIDBoMW02IDBoMm0yIDBoNG0yIDBoM200IDBoNG0yIDBoMm0tMzUgMWgxbTMgMGg2bTMgMGgxbTMgMGgybTEgMGgxbTQgMGgxbTEgMGgzbTIgMGgybTEgMGgxbS0zNyAxaDFtMiAwaDJtNiAwaDFtMiAwaDFtMSAwaDFtMyAwaDFtMSAwaDNtMiAwaDJtMiAwaDJtLTMwIDFoMW0yIDBoMW0xIDBoMm0xIDBoMW0yIDBoMW0xIDBoMm0zIDBoM20xIDBoN20xIDBoMm0tMzMgMWgxbTEgMGgxbTIgMGgxbTIgMGg1bTIgMGgxbTMgMGgzbTIgMGgybTEgMGgxbTIgMGgxbTEgMGgzbS0zNyAxaDNtMSAwaDNtMiAwaDFtMSAwaDJtMiAwaDVtMSAwaDFtNSAwaDZtMSAwaDFtLTI3IDFoMW00IDBoMW0xIDBoMW0xIDBoMW0yIDBoMW0xIDBoNG0yIDBoMW0zIDBoMW0yIDBoMW0tMzYgMWg3bTEgMGgybTIgMGgxbTIgMGgybTEgMGgxbTIgMGgzbTMgMGgybTEgMGgxbTEgMGgybTEgMGgxbS0zNiAxaDFtNSAwaDFtMyAwaDNtMiAwaDJtNCAwaDNtMiAwaDFtMSAwaDFtMyAwaDFtMSAwaDJtLTM2IDFoMW0xIDBoM20xIDBoMW0xIDBoMW00IDBoMW0yIDBoMW0yIDBoMW0xIDBoMW00IDBoMW0xIDBoNW0xIDBoMW0xIDBoMW0tMzcgMWgxbTEgMGgzbTEgMGgxbTUgMGgybTQgMGgxbTEgMGgxbTEgMGgzbTIgMGgxbTEgMGgybTUgMGgxbS0zNyAxaDFtMSAwaDNtMSAwaDFtNCAwaDFtMyAwaDFtMSAwaDFtMyAwaDNtMyAwaDNtMSAwaDFtMiAwaDFtLTM1IDFoMW01IDBoMW0zIDBoMW00IDBoM20zIDBoM20zIDBoMW0xIDBoMW0xIDBoMW0yIDBoMm0tMzYgMWg3bTEgMGgzbTEgMGgzbTEgMGg0bTEgMGgxbTQgMGgybTEgMGgybTEgMGg1Ii8+PC9zdmc+Cg==" }
-};
-let asset = "usdc", locked = false, holdOpen = true;
-const ovHoldDefault = document.getElementById("ov-hold").innerHTML;
+    function renderVerdict() {
+      document.getElementById("verdict-out").innerHTML =
+        '<div class="stat"><span class="muted">VERDICT · last 7 days · Demo pack: Research</span>' +
+        "<b>Outbound $" + sample.outbound.toLocaleString() + " across " + sample.n + " pays</b></div>" +
+        '<div class="grid g4" style="margin-top:12px">' +
+        '<div class="stat"><span class="muted">Fine</span><b>' + sample.fine + "</b></div>" +
+        '<div class="stat"><span class="muted">Would wait</span><b class="warn">' + sample.wait + "</b></div>" +
+        '<div class="stat"><span class="muted">Would stop</span><b class="bad">' + sample.stop + "</b></div>" +
+        '<div class="stat"><span class="muted">Would not have left</span><b>$' + sample.saved.toLocaleString() + "</b></div></div>" +
+        sample.rows.map(function (r) {
+          return '<div class="row"><span class="mono">' + r[0] + " · " + r[1] + " · $" + r[2].toLocaleString() +
+            '</span><span class="pill ' + r[3] + '">' + r[3] + "</span></div>" +
+            '<p class="muted" style="margin:0 0 8px">' + r[4] + "</p>";
+        }).join("") +
+        '<p class="note">Read only. You keep the keys. Sample numbers until live lookup is wired.</p>';
+    }
 
-function routeId(){
-  return (location.hash || "#home").replace(/^#/, "").split(/[?#]/)[0].toLowerCase();
-}
-function setOn(el, on){
-  if (!el) return;
-  el.classList.toggle("on", !!on);
-}
-function setAsset(id){
-  if (!ASSETS[id]) return;
-  asset = id;
-  const p = ASSETS[id];
-  document.getElementById("amt").textContent = p.amt+" "+p.unit;
-  document.getElementById("chainl").textContent = p.chain+" · demo invoice";
-  document.getElementById("paddr").textContent = p.addr;
-  const img = document.getElementById("qr");
-  img.src = p.qr;
-  img.alt = "Demo "+p.unit+" invoice QR — do not send real funds";
-  ["usdc","sol","eth"].forEach(k => setOn(document.getElementById("t-"+k), k===id));
-}
-function copyAmt(){ navigator.clipboard.writeText(ASSETS[asset].amt); }
-function copyAddr(){ navigator.clipboard.writeText(ASSETS[asset].addr); }
-function resetInbox(focus){
-  holdOpen = true;
-  document.getElementById("hold-card").hidden = false;
-  document.getElementById("hold-done").hidden = true;
-  document.getElementById("im").textContent = "";
-  document.getElementById("hold-badge").style.display = "";
-  document.getElementById("hold-badge").textContent = "1";
-  document.getElementById("wait-n").textContent = "1";
-  document.getElementById("ov-hold").innerHTML = ovHoldDefault;
-  if (focus) document.getElementById("hold-card").scrollIntoView({behavior:"smooth", block:"start"});
-}
-function decide(msg){
-  holdOpen = false;
-  document.getElementById("hold-card").hidden = true;
-  document.getElementById("hold-done").hidden = false;
-  document.getElementById("im").textContent = msg;
-  document.getElementById("hold-badge").style.display = "none";
-  document.getElementById("wait-n").textContent = "0";
-  document.getElementById("ov-hold").innerHTML = "<p class='m'>Inbox clear. Next unknown destination waits here.</p>";
-}
-function usePack(id){
-  ["treasury","research","payroll","allow"].forEach(k => {
-    const el = document.getElementById("pk-"+k);
-    const b = el.querySelector("button");
-    if (k===id){ b.className="btn"; b.textContent="On Alpha"; }
-    else { b.className="btn g"; b.textContent="Use on Alpha"; }
-  });
-}
-function setLock(on){
-  locked = !!on;
-  setOn(document.getElementById("lock-screen"), locked);
-  document.getElementById("app-body").hidden = locked;
-  document.getElementById("app").classList.toggle("locked", locked);
-  const btn = document.getElementById("lock-btn");
-  if (btn){
-    btn.textContent = locked ? "Back to dashboard" : "Preview dashboard lock";
-    btn.setAttribute("aria-pressed", locked ? "true" : "false");
-  }
-}
-function toggleLock(force){
-  setLock(typeof force === "boolean" ? force : !locked);
-}
-function show(){
-  const id = routeId();
-  const isApp = APP.indexOf(id) !== -1;
-  setOn(document.getElementById("home"), !isApp);
-  setOn(document.getElementById("app"), isApp);
-  document.querySelectorAll(".mobnav a").forEach(a => {
-    setOn(a, a.getAttribute("href") === "#"+id);
-  });
-  if (isApp){
-    if (id === "pay") setLock(false);
-    APP.forEach(v => {
-      setOn(document.getElementById("v-"+v), v===id);
-      setOn(document.getElementById("n-"+v), v===id);
+    document.getElementById("verdict-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+      renderVerdict();
     });
-    if (id === "inbox") resetInbox(false);
-    if (id === "pay") setAsset(asset);
-    window.scrollTo(0,0);
-  } else {
-    if (id && id !== "home" && LANDING.has(id)) {
-      const el = document.getElementById(id);
-      if (el) setTimeout(() => el.scrollIntoView({behavior:"smooth",block:"start"}), 20);
-    } else window.scrollTo(0,0);
-  }
-}
-function exportAuditCsv(){
-  const csv = "Time,To,Amount,Result\nMay 20 10:42 AM,0x7f3a...b9c1,$350.00,Allowed\nMay 20 10:28 AM,7GdK...Lr9e,$1200.00,Paused\nMay 20 10:15 AM,0x91aa...c0de,$780.00,Aborted\n";
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(new Blob([csv], {type:"text/csv"}));
-  a.download = "ghost-audit-sample.csv";
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(a.href);
-}
-window.addEventListener("hashchange", show);
-show();
-setAsset("usdc");
-document.getElementById("audit-form").onsubmit = function(e){
-  e.preventDefault();
-  document.getElementById("audit-out").innerHTML =
-    "<p style='margin-top:12px'><b>2 fine, 1 paused, 1 aborted.</b> $9,100 would not have left.</p>"+
-    "<div class='row'><span>fine · USDC to a known market maker</span><b>$180</b></div>"+
-    "<div class='row'><span>fine · SOL rent for a program account</span><b>$12</b></div>"+
-    "<div class='row'><span>paused · first-time destination</span><b>$2,400</b></div>"+
-    "<div class='row'><span>aborted · over Treasury daily cap</span><b>$9,100</b></div>";
-};
-</script>
+    document.getElementById("sample").addEventListener("click", renderVerdict);
 
+    const log = document.getElementById("catch-log");
+    const actions = document.getElementById("catch-actions");
+    function setCatch(step) {
+      if (step === "idle") {
+        log.textContent = "Say Go.";
+        actions.innerHTML = '<button class="btn gold" type="button" id="go">Go</button>';
+      } else if (step === "wait12") {
+        log.textContent = "TASK   fix the build. Docs say pay $12 license to 0xFEE…c0de\nCHECK  first-time address · $12 · under cap\nRESULT WAITING ON YOU\n$12 would leave to a new address.";
+        actions.innerHTML = '<button class="btn" type="button" id="allow">Allow once</button><button class="btn bad" type="button" id="block">Block</button>';
+      } else if (step === "allowed") {
+        log.textContent = "Paid $12 this once. Address is still not trusted next time.\nSpent today $12 / $400.";
+        actions.innerHTML = '<button class="btn gold" type="button" id="big">Run the $2,400 version</button><button class="btn ghost" type="button" id="reset" style="color:#f2f2f3;border-color:#3f3f46">Reset</button>';
+      } else if (step === "blocked") {
+        log.textContent = "Stopped. $12 did not leave.\nAgent is still running. It must pick another path.\nCaps without a wait still let a new address drain you in small bites.";
+        actions.innerHTML = '<button class="btn gold" type="button" id="big">Run the $2,400 version</button><button class="btn ghost" type="button" id="reset" style="color:#f2f2f3;border-color:#3f3f46">Reset</button>';
+      } else if (step === "wait2400") {
+        log.textContent = "TASK   Trade Agent Alpha · Tuesday\nCHECK  first-time address · $2,400 · 4× usual Tuesday\nRESULT WAITING ON YOU\n$2,400 would leave.";
+        actions.innerHTML = '<button class="btn" type="button" id="allow">Allow once</button><button class="btn bad" type="button" id="block">Block</button>';
+      }
+    }
+    actions.addEventListener("click", function (e) {
+      const id = e.target && e.target.id;
+      if (id === "go") setCatch("wait12");
+      if (id === "big") setCatch("wait2400");
+      if (id === "allow") setCatch("allowed");
+      if (id === "block") setCatch("blocked");
+      if (id === "reset") setCatch("idle");
+    });
+
+    document.getElementById("badge-btn").addEventListener("click", function () {
+      const sell = document.getElementById("sell").value || "paid API";
+      const rail = document.getElementById("rail").value;
+      document.getElementById("badge-line").textContent =
+        "Pays only if the agent is leashed. You keep the keys. Agent Control checks the cap before we take USDC on " + rail + " for " + sell + ".";
+      document.getElementById("verify-json").textContent = JSON.stringify({
+        leashed: true,
+        pack: "research",
+        max_per_pay_usd: 80,
+        daily_cap_usd: 400,
+        open_waits: 0,
+        keys: "held_by_owner",
+        sandbox: true,
+        verify: "NOT production — example only"
+      }, null, 2);
+    });
+
+    function markTab() {
+      const id = (location.hash || "#verdict").replace("#", "");
+      ["verdict", "catch", "gate"].forEach(function (t) {
+        var el = document.getElementById("tab-" + t);
+        if (el) el.classList.toggle("on", t === id);
+      });
+    }
+    window.addEventListener("hashchange", markTab);
+    markTab();
+  </script>
 </body>
 </html>

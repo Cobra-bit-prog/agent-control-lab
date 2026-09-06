@@ -1,11 +1,13 @@
 # Agent Control lab (sandbox)
 
-Self-contained product tour. **Not production.** Live site: https://agent-control.net
+Front door: Verdict, Catch, Gate.
 
-Open `index.html`: landing, ghost audit, packs, pricing, console, inbox (Allow / Always / Block), agents, policies, QR checkout (USDC / SOL / ETH), SDK snippet.
+**Not production.** Live site: https://agent-control.net
 
-Hash routes: `#home` `#audit` `#packs` `#pricing` (landing) and `#console` `#inbox` `#agents` `#policies` `#pay` `#docs` (tour app).
+Open: https://cobra-bit-prog.github.io/agent-control-lab/
 
-`styles.css` is an unused leftover and is not loaded by the tour; `index.html` is self-contained.
+- `#verdict` paste a wallet (sample numbers)
+- `#catch` watch a pay wait
+- `#gate` seller badge
 
 Do not send real funds. No KYC. No card.

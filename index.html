@@ -4,247 +4,233 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Agent Control — Keep your agents on a leash you can see</title>
-  <meta name="description" content="Don’t let your AI spend your money. Paste a wallet. Watch a pay wait. Sellers can require a leash." />
+  <meta name="description" content="Don’t let your AI spend your money. You set a budget. A new address waits. You tap yes or no." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <style>
-    :root {
-      --bg: #f3f0e8;
-      --paper: #fbfaf6;
-      --ink: #141517;
-      --muted: #5c5c66;
-      --line: #ddd6c8;
-      --navy: #141517;
-      --gold: #d4a054;
-      --ok: #1f7a4d;
-      --bad: #b42318;
-      --desk: #0b0c0e;
-      --desk-fg: #f2f2f3;
-      --desk-muted: #a1a1aa;
-    }
+    :root { --bg:#f3f0e8; --paper:#fbfaf6; --ink:#141517; --muted:#5c5c66; --line:#ddd6c8; --gold:#d4a054; --ok:#1f7a4d; --bad:#b42318; --desk:#0b0c0e; --desk-fg:#f2f2f3; --desk-muted:#a1a1aa; }
     * { box-sizing: border-box; }
-    html, body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 "Instrument Sans", system-ui, sans-serif; }
-    h1, h2 { font-family: "Instrument Serif", Georgia, serif; font-weight: 400; letter-spacing: -0.03em; }
-    h1 { font-size: clamp(34px, 6vw, 56px); line-height: 1.06; margin: 0 0 12px; }
-    h2 { font-size: clamp(26px, 4vw, 36px); margin: 0 0 8px; }
-    a { color: inherit; }
-    button { font: inherit; cursor: pointer; }
-    .banner { background: var(--navy); color: #fff; text-align: center; font-size: 13px; padding: 8px 14px; }
-    .banner a { color: #f3e6c6; }
-    .wrap { max-width: 980px; margin: 0 auto; padding: 0 20px; }
-    header.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 0; flex-wrap: wrap; }
-    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; text-decoration: none; }
-    .mark { width: 28px; height: 28px; border-radius: 8px; background: var(--navy); color: #fff; display: grid; place-items: center; font-size: 13px; }
-    nav a { margin-left: 14px; text-decoration: none; color: var(--muted); font-size: 14px; font-weight: 600; }
-    nav a.on, nav a:hover { color: var(--ink); }
-    .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; border-radius: 999px; padding: 10px 16px; border: 1px solid var(--navy); background: var(--navy); color: #fff; text-decoration: none; font-weight: 600; font-size: 14px; }
-    .btn.ghost { background: transparent; color: var(--navy); }
-    .btn.gold { background: var(--gold); border-color: var(--gold); color: #141517; }
-    .btn.bad { background: var(--bad); border-color: var(--bad); color: #fff; }
-    .kicker { color: var(--muted); font-size: 12px; letter-spacing: .16em; text-transform: uppercase; font-weight: 700; }
-    .muted { color: var(--muted); }
-    .hero { padding: 12px 0 8px; }
-    .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 18px 0 20px; }
-    .tabs a { text-decoration: none; color: var(--muted); border: 1px solid var(--line); background: var(--paper); border-radius: 999px; padding: 10px 14px; font-size: 14px; font-weight: 600; }
-    .tabs a.on { color: #fff; background: var(--navy); border-color: var(--navy); }
-    .card { background: var(--paper); border: 1px solid var(--line); border-radius: 20px; padding: 20px; }
-    .desk { background: var(--desk); color: var(--desk-fg); border-radius: 20px; padding: 20px; }
-    .desk .muted { color: var(--desk-muted); }
-    .desk .kicker { color: var(--gold); }
-    .desk h2 { color: var(--desk-fg); }
-    .grid { display: grid; gap: 12px; }
-    @media (min-width: 800px) {
-      .g4 { grid-template-columns: repeat(4, 1fr); }
-      .g2 { grid-template-columns: 1fr 1fr; }
-      .verdict-form { grid-template-columns: 1fr auto auto; }
-    }
-    .stat { background: #efe9dc; border-radius: 14px; padding: 14px; }
-    .stat b { display: block; font-size: 22px; margin-top: 4px; }
-    .desk .stat { background: #141517; }
-    input, select { width: 100%; border: 1px solid var(--line); border-radius: 12px; padding: 12px; font: inherit; background: #fff; }
-    label { display: block; font-size: 13px; color: var(--muted); margin: 10px 0 6px; }
-    .row { display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 10px 0; border-top: 1px solid var(--line); }
-    .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 13px; }
-    .mono-log { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 13px; line-height: 1.6; color: #d4d4d8; white-space: pre-wrap; margin-top: 14px; }
-    .pill { display: inline-block; border-radius: 999px; padding: 2px 8px; font-size: 12px; font-weight: 700; }
-    .pill.fine { background: #dcfce7; color: #166534; }
-    .pill.wait { background: #fff7ed; color: #9a3412; }
-    .pill.stop { background: #fee2e2; color: #991b1b; }
-    .warn { color: #9a3412; }
-    .bad { color: var(--bad); }
-    .json { background: #0b0c0e; color: #e5e7eb; border-radius: 12px; padding: 14px; font-family: "IBM Plex Mono", monospace; font-size: 12px; overflow: auto; min-height: 160px; }
-    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
-    .note { font-size: 12px; color: var(--muted); }
-    footer { padding: 28px 0 48px; color: var(--muted); font-size: 13px; }
+    html, body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.5 "Instrument Sans", system-ui, sans-serif; }
+    h1,h2 { font-family:"Instrument Serif", Georgia, serif; font-weight:400; letter-spacing:-.03em; }
+    h1 { font-size:clamp(34px,6vw,56px); line-height:1.06; margin:0 0 12px; }
+    h2 { font-size:clamp(26px,4vw,36px); margin:0 0 8px; }
+    h3 { font-size:22px; margin:8px 0 6px; }
+    a { color:inherit; }
+    button { font:inherit; cursor:pointer; }
+    .banner { background:var(--ink); color:#fff; text-align:center; font-size:13px; padding:8px 14px; }
+    .banner a { color:#f3e6c6; }
+    .wrap { max-width:1080px; margin:0 auto; padding:0 20px; }
+    header.top { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:18px 0; flex-wrap:wrap; position:sticky; top:0; background:var(--bg); z-index:20; }
+    .brand { display:flex; align-items:center; gap:10px; font-weight:700; text-decoration:none; }
+    .mark { width:28px; height:28px; border-radius:8px; background:var(--ink); color:#fff; display:grid; place-items:center; font-size:13px; }
+    nav a { margin-left:14px; text-decoration:none; color:var(--muted); font-size:14px; font-weight:600; }
+    nav a:hover { color:var(--ink); }
+    .btn { display:inline-flex; align-items:center; justify-content:center; min-height:44px; border-radius:999px; padding:10px 16px; border:1px solid var(--ink); background:var(--ink); color:#fff; text-decoration:none; font-weight:600; font-size:14px; }
+    .btn.ghost { background:transparent; color:var(--ink); }
+    .btn.light { background:#fff; color:var(--ink); border-color:#3f3f46; }
+    .kicker { color:var(--muted); font-size:12px; letter-spacing:.16em; text-transform:uppercase; font-weight:700; }
+    .muted { color:var(--muted); }
+    .hero { display:grid; gap:36px; padding:20px 0 48px; }
+    @media (min-width:900px){ .hero { grid-template-columns:1.05fr .95fr; align-items:center; } }
+    .card { background:var(--paper); border:1px solid var(--line); border-radius:20px; padding:20px; }
+    .desk { background:var(--desk); color:var(--desk-fg); }
+    .desk .muted { color:var(--desk-muted); }
+    .desk .kicker { color:var(--gold); }
+    .grid { display:grid; gap:14px; }
+    @media (min-width:800px){ .g4{grid-template-columns:repeat(4,1fr)} .g3{grid-template-columns:repeat(3,1fr)} .g2{grid-template-columns:1fr 1fr} }
+    .stat { background:#efe9dc; border-radius:14px; padding:14px; }
+    .desk .stat { background:#141517; }
+    .stat b { display:block; font-size:22px; margin-top:4px; }
+    .wait { background:rgba(212,160,84,.12); border:1px solid rgba(212,160,84,.45); border-radius:14px; padding:14px; }
+    input { width:100%; border:1px solid var(--line); border-radius:12px; padding:12px; font:inherit; background:#fff; }
+    .row { display:flex; justify-content:space-between; gap:12px; align-items:center; padding:10px 0; border-top:1px solid var(--line); }
+    .mono { font-family:"IBM Plex Mono", ui-monospace, monospace; font-size:13px; }
+    .mono-log { font-family:"IBM Plex Mono", ui-monospace, monospace; font-size:13px; line-height:1.6; white-space:pre-wrap; min-height:6.5em; margin:12px 0 0; }
+    .pill { display:inline-block; border-radius:999px; padding:2px 8px; font-size:12px; font-weight:700; }
+    .pill.fine { background:#dcfce7; color:#166534; }
+    .pill.wait { background:#fff7ed; color:#9a3412; }
+    .pill.stop { background:#fee2e2; color:#991b1b; }
+    .warn { color:#9a3412; }
+    .bad { color:var(--bad); }
+    .section { padding:56px 0; border-top:1px solid var(--line); }
+    .desk-band { background:var(--desk); color:var(--desk-fg); }
+    .desk-band .muted { color:var(--desk-muted); }
+    footer { padding:28px 0 48px; color:var(--muted); font-size:13px; }
+    details { border-top:1px solid var(--line); padding:12px 0; }
+    summary { cursor:pointer; font-weight:600; }
   </style>
 </head>
 <body>
-  <div class="banner">Sandbox front door — demo numbers, no real funds. Live product: <a href="https://agent-control.net">agent-control.net</a> (untouched)</div>
+  <div class="banner">Sandbox — example numbers. Live product: <a href="https://agent-control.net">agent-control.net</a></div>
   <div class="wrap">
     <header class="top">
-      <a class="brand" href="#verdict"><span class="mark">⌘</span> Agent Control</a>
+      <a class="brand" href="#home"><span class="mark">⌘</span> Agent Control</a>
       <nav>
-        <a href="#verdict" class="on" data-tab="verdict">Verdict</a>
-        <a href="#catch" data-tab="catch">Catch</a>
-        <a href="#gate" data-tab="gate">Gate</a>
+        <a href="#catch">See it</a>
+        <a href="#week">Last week</a>
+        <a href="#packs">Packs</a>
+        <a href="#pricing">Pricing</a>
         <a class="btn" href="https://agent-control.net">Try it free</a>
       </nav>
     </header>
 
-    <section class="hero">
-      <p class="kicker">First session · sandbox</p>
-      <h1>Keep your agents on a leash you can see.</h1>
-      <p class="muted">Don’t let your AI spend your money. Three doors. No signup first.</p>
+    <section class="hero" id="home">
+      <div>
+        <p class="kicker">For wallets your agents spend from</p>
+        <h1>Keep your agents on a leash you can see.</h1>
+        <p class="muted" style="font-size:18px">Don’t let your AI spend your money.</p>
+        <p class="muted" style="margin-top:12px">You set a budget. A new address waits. You tap yes or no. You keep the keys.</p>
+        <p style="margin-top:22px">
+          <a class="btn" href="https://agent-control.net">Try it free</a>
+          <a class="btn ghost" href="#catch">Watch it wait</a>
+        </p>
+        <p class="muted" style="margin-top:12px;font-size:13px">24 hours free. Then pay on-chain. No card. No KYC.</p>
+      </div>
+      <div class="card desk">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <strong>Operator console</strong>
+          <span class="muted" style="font-size:12px">Live</span>
+        </div>
+        <div class="grid g4" style="margin-top:14px">
+          <div class="stat"><span class="muted">Wallets</span><b>3</b></div>
+          <div class="stat"><span class="muted">Today</span><b>$1,640</b></div>
+          <div class="stat"><span class="muted">On-chain</span><b>$48,210</b></div>
+          <div class="stat"><span class="muted">Waiting</span><b style="color:var(--gold)">1</b></div>
+        </div>
+        <div class="wait" style="margin-top:14px">
+          <p class="kicker">Waiting on you</p>
+          <p style="margin:8px 0 4px"><strong>$2,400 · first-time address</strong></p>
+          <p class="muted" style="margin:0 0 12px">Trade Agent Alpha · 4× a usual Tuesday</p>
+          <a class="btn light" href="#catch">Allow once</a>
+          <a class="btn ghost" href="#catch" style="color:#f2f2f3;border-color:#3f3f46">Block</a>
+        </div>
+      </div>
     </section>
+  </div>
 
-    <div class="tabs">
-      <a href="#verdict" class="on" id="tab-verdict">1 Verdict</a>
-      <a href="#catch" id="tab-catch">2 Catch</a>
-      <a href="#gate" id="tab-gate">3 Gate</a>
+  <div class="desk-band" id="catch">
+    <div class="wrap" style="display:grid;gap:32px;padding:56px 20px">
+      <div class="grid g2" style="align-items:center">
+        <div>
+          <p class="kicker">See it happen</p>
+          <h2 style="color:#f2f2f3">A new address waits on you.</h2>
+          <p class="muted">The agent wants to pay. You have not seen this address. Money does not leave until you tap.</p>
+          <p class="muted" style="font-size:12px;margin-top:10px">Example only. No real money moves.</p>
+        </div>
+        <div class="card desk">
+          <p class="muted">Research agent · $80 per pay · $400 a day</p>
+          <div id="catch-log" class="mono-log">Tap Go. The agent tries to pay a license fee.</div>
+          <p id="catch-actions" style="margin-top:14px">
+            <button class="btn light" type="button" id="go">Go</button>
+          </p>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <section id="verdict" class="card" style="margin-bottom:24px">
-      <p class="kicker">Magnet 1</p>
-      <h2>Paste the wallet. See what would not have left.</h2>
-      <p class="muted">Read only. Demo pack: Research. Any address shows the locked sample until live lookup is wired.</p>
-      <form id="verdict-form" class="grid verdict-form" style="margin-top:14px">
-        <input id="addr" placeholder="0x… or Solana address" value="0xTreasuryDemo0001" />
-        <button class="btn ghost" type="button" id="sample">Show sample</button>
-        <button class="btn" type="submit">Verdict</button>
+  <div class="wrap">
+    <section class="section" id="week">
+      <p class="kicker">Proof</p>
+      <h2>See what would not have left.</h2>
+      <p class="muted">Paste an agent wallet. Or open an example week. Read-only. We never hold the keys.</p>
+      <form id="week-form" class="grid" style="grid-template-columns:1fr auto; gap:10px; margin-top:16px">
+        <input id="addr" placeholder="Paste a wallet" />
+        <button class="btn" type="submit">Open an example</button>
       </form>
-      <div id="verdict-out" style="margin-top:16px"></div>
+      <div id="week-out" style="margin-top:16px"></div>
     </section>
 
-    <section id="catch" class="desk" style="margin-bottom:24px">
-      <p class="kicker">Magnet 2 · DEMO · NO REAL FUNDS</p>
-      <h2>Watch an agent try to take $12.</h2>
-      <p class="muted">Research · $80 / pay · $400 / day · first-time destination waits.</p>
-      <div id="catch-log" class="mono-log">Say Go.</div>
-      <div class="actions" id="catch-actions">
-        <button class="btn gold" type="button" id="go">Go</button>
+    <section class="section" id="how">
+      <h2>How it works.</h2>
+      <p class="muted">Three steps. No custody. The agent has to ask before it spends.</p>
+      <div class="grid g3" style="margin-top:24px">
+        <div><p class="muted">01</p><h3>Set a budget</h3><p class="muted">A daily cap for each agent wallet. You pick it. They cannot raise it.</p></div>
+        <div><p class="muted">02</p><h3>Anything outside waits</h3><p class="muted">New address. Over the cap. Off the list. It does not leave until you say so.</p></div>
+        <div><p class="muted">03</p><h3>You decide</h3><p class="muted">Allow once, always allow, or block. You still hold the keys.</p></div>
       </div>
     </section>
 
-    <section id="gate" class="card" style="margin-bottom:28px">
-      <p class="kicker">Magnet 5 · sellers</p>
-      <h2>Pays only if the agent is leashed.</h2>
-      <p class="muted">You keep settlement. We attest the leash. Verify is SANDBOX — not a live production route.</p>
-      <div class="grid g2" style="margin-top:16px">
-        <div>
-          <label>What you sell</label>
-          <input id="sell" placeholder="e.g. $0.02 research call" />
-          <label>How agents pay today</label>
-          <select id="rail">
-            <option>x402</option>
-            <option>API key</option>
-            <option>Invoice</option>
-            <option>Other</option>
-          </select>
-          <button class="btn" type="button" id="badge-btn" style="margin-top:14px">Show badge + verify</button>
-        </div>
-        <div>
-          <p class="muted" id="badge-line">Badge appears here.</p>
-          <pre class="json" id="verify-json">{ "leashed": true, "note": "sandbox example" }</pre>
-        </div>
+    <section class="section" id="packs">
+      <p class="kicker">Limits</p>
+      <h2>Pick a pack. Tighten later.</h2>
+      <p class="muted">Start from the job the agent does.</p>
+      <div class="grid g4" style="margin-top:20px">
+        <div class="card"><b>Treasury bot</b><p class="muted">Tight cap. New addresses wait for you.</p><p class="muted" style="font-size:12px">Daily $5,000 · max $500</p></div>
+        <div class="card"><b>Research agent</b><p class="muted">Small experiments. Almost everything should be cheap.</p><p class="muted" style="font-size:12px">Daily $400 · max $80</p></div>
+        <div class="card"><b>Payroll</b><p class="muted">Larger known pays. Unknown addresses still wait.</p><p class="muted" style="font-size:12px">Daily $25,000 · max $8,000</p></div>
+        <div class="card"><b>Only these addresses</b><p class="muted">You name who they can pay. Everything else waits.</p><p class="muted" style="font-size:12px">Allowlist</p></div>
       </div>
     </section>
 
-    <p style="margin-bottom:8px">
-      <a class="btn" href="https://agent-control.net">Try it free</a>
-      <span class="note"> · 24h on the live product · no card · no KYC · you keep the keys</span>
-    </p>
-    <footer>Sandbox only. Do not send real funds here. If the agent skips the check, Inbox cannot stop a pay.</footer>
+    <section class="section" id="pricing">
+      <h2>24 hours free. Then on-chain.</h2>
+      <p class="muted">No card. No KYC. USDC, SOL, or ETH.</p>
+      <div class="grid g4" style="margin-top:20px">
+        <div class="card"><p class="muted">Trial</p><p style="font-size:28px;font-weight:700;margin:8px 0">24h</p><p class="muted">Full console.</p><p><a class="btn" href="https://agent-control.net">Try it free</a></p></div>
+        <div class="card"><p class="muted">Starter</p><p style="font-size:28px;font-weight:700;margin:8px 0">$29<span class="muted" style="font-size:14px">/mo</span></p><p class="muted">Small fleet.</p></div>
+        <div class="card"><p class="muted">Pro</p><p style="font-size:28px;font-weight:700;margin:8px 0">$49<span class="muted" style="font-size:14px">/mo</span></p><p class="muted">Priority alerts.</p></div>
+        <div class="card"><p class="muted">Team</p><p style="font-size:28px;font-weight:700;margin:8px 0">$149<span class="muted" style="font-size:14px">/mo</span></p><p class="muted">Builder + Approver.</p></div>
+      </div>
+    </section>
+
+    <section class="section" id="sellers">
+      <p class="kicker">If agents pay you</p>
+      <h2>Take money only from agents that have a leash.</h2>
+      <p class="muted">You keep your own checkout. We only answer: is this agent capped, and does a human see new addresses?</p>
+      <div class="card" style="margin-top:16px;max-width:640px">
+        Pays only if the agent is leashed. You keep the keys. Agent Control checks the cap before we take USDC.
+      </div>
+    </section>
+
+    <section class="section" id="faq">
+      <h2>Questions operators ask.</h2>
+      <details><summary>Do you hold my keys?</summary><p class="muted">No. You keep the keys. If the agent skips the check, we cannot stop that pay.</p></details>
+      <details><summary>What is waiting versus a stop?</summary><p class="muted">Waiting means you decide. A stop is a hard no.</p></details>
+      <details><summary>How do I pay?</summary><p class="muted">On-chain USDC, SOL, or ETH. No card. No KYC.</p></details>
+    </section>
+
+    <p><a class="btn" href="https://agent-control.net">Try it free</a> <span class="muted"> · 24 hours · you keep the keys</span></p>
+    <footer>Sandbox. Example week. Live product is agent-control.net.</footer>
   </div>
   <script>
-    const sample = {
-      outbound: 4180, n: 4, fine: 2, wait: 1, stop: 1, saved: 3180,
-      rows: [
-        ["Tue 10:42", "0x7f3a…b9c1", 350, "fine", "Seen twice this week"],
-        ["Tue 10:28", "7GdK…Lr9e", 2400, "wait", "First-time address"],
-        ["Tue 10:15", "0x91aa…c0de", 780, "stop", "Over $500 and new"],
-        ["Mon 18:02", "0xa1c0…11e4", 650, "fine", "Allowlisted counterparty"]
-      ]
-    };
-
-    function renderVerdict() {
-      document.getElementById("verdict-out").innerHTML =
-        '<div class="stat"><span class="muted">VERDICT · last 7 days · Demo pack: Research</span>' +
-        "<b>Outbound $" + sample.outbound.toLocaleString() + " across " + sample.n + " pays</b></div>" +
-        '<div class="grid g4" style="margin-top:12px">' +
-        '<div class="stat"><span class="muted">Fine</span><b>' + sample.fine + "</b></div>" +
-        '<div class="stat"><span class="muted">Would wait</span><b class="warn">' + sample.wait + "</b></div>" +
-        '<div class="stat"><span class="muted">Would stop</span><b class="bad">' + sample.stop + "</b></div>" +
-        '<div class="stat"><span class="muted">Would not have left</span><b>$' + sample.saved.toLocaleString() + "</b></div></div>" +
-        sample.rows.map(function (r) {
-          return '<div class="row"><span class="mono">' + r[0] + " · " + r[1] + " · $" + r[2].toLocaleString() +
-            '</span><span class="pill ' + r[3] + '">' + r[3] + "</span></div>" +
-            '<p class="muted" style="margin:0 0 8px">' + r[4] + "</p>";
-        }).join("") +
-        '<p class="note">Read only. You keep the keys. Sample numbers until live lookup is wired.</p>';
-    }
-
-    document.getElementById("verdict-form").addEventListener("submit", function (e) {
+    const sampleRows = [
+      ["fine", 180, "USDC to a known market maker"],
+      ["fine", 12, "SOL rent for a program account"],
+      ["wait", 2400, "First-time address"],
+      ["stop", 9100, "Over the daily cap"]
+    ];
+    document.getElementById("week-form").addEventListener("submit", function (e) {
       e.preventDefault();
-      renderVerdict();
+      document.getElementById("week-out").innerHTML =
+        '<div class="card"><p class="muted">Example week · research agent</p><p style="font-size:18px;margin:8px 0 0"><strong>2 fine, 1 would wait, 1 would stop. $9,100 would not have left.</strong></p>' +
+        sampleRows.map(function (r) {
+          return '<div class="row"><span class="pill ' + r[0] + '">' + r[0] + '</span><span class="mono">$' + r[1].toLocaleString() + '</span></div><p class="muted" style="margin:0 0 8px">' + r[2] + "</p>";
+        }).join("") + "</div>";
     });
-    document.getElementById("sample").addEventListener("click", renderVerdict);
-
     const log = document.getElementById("catch-log");
     const actions = document.getElementById("catch-actions");
     function setCatch(step) {
-      if (step === "idle") {
-        log.textContent = "Say Go.";
-        actions.innerHTML = '<button class="btn gold" type="button" id="go">Go</button>';
-      } else if (step === "wait12") {
-        log.textContent = "TASK   fix the build. Docs say pay $12 license to 0xFEE…c0de\nCHECK  first-time address · $12 · under cap\nRESULT WAITING ON YOU\n$12 would leave to a new address.";
-        actions.innerHTML = '<button class="btn" type="button" id="allow">Allow once</button><button class="btn bad" type="button" id="block">Block</button>';
-      } else if (step === "allowed") {
-        log.textContent = "Paid $12 this once. Address is still not trusted next time.\nSpent today $12 / $400.";
-        actions.innerHTML = '<button class="btn gold" type="button" id="big">Run the $2,400 version</button><button class="btn ghost" type="button" id="reset" style="color:#f2f2f3;border-color:#3f3f46">Reset</button>';
-      } else if (step === "blocked") {
-        log.textContent = "Stopped. $12 did not leave.\nAgent is still running. It must pick another path.\nCaps without a wait still let a new address drain you in small bites.";
-        actions.innerHTML = '<button class="btn gold" type="button" id="big">Run the $2,400 version</button><button class="btn ghost" type="button" id="reset" style="color:#f2f2f3;border-color:#3f3f46">Reset</button>';
-      } else if (step === "wait2400") {
-        log.textContent = "TASK   Trade Agent Alpha · Tuesday\nCHECK  first-time address · $2,400 · 4× usual Tuesday\nRESULT WAITING ON YOU\n$2,400 would leave.";
-        actions.innerHTML = '<button class="btn" type="button" id="allow">Allow once</button><button class="btn bad" type="button" id="block">Block</button>';
-      }
+      const lines = {
+        idle: "Tap Go. The agent tries to pay a license fee.",
+        wait12: "Wants $12 · new address\nWaiting on you\n$12 would leave.",
+        allowed: "Allowed this once.\nNext time this address waits again.\nSpent today $12 of $400.",
+        blocked: "Stopped. $12 did not leave.\nThe agent is still running. It has to find another way.",
+        wait2400: "Trade Agent Alpha · Tuesday\nWants $2,400 · new address · 4× usual\nWaiting on you"
+      };
+      log.textContent = lines[step];
+      if (step === "idle") actions.innerHTML = '<button class="btn light" type="button" id="go">Go</button>';
+      else if (step === "wait12" || step === "wait2400") actions.innerHTML = '<button class="btn light" type="button" id="allow">Allow once</button> <button class="btn ghost" type="button" id="block" style="color:#f2f2f3;border-color:#3f3f46">Block</button>';
+      else actions.innerHTML = '<button class="btn light" type="button" id="big">See the $2,400 one</button> <button class="btn ghost" type="button" id="reset" style="color:#f2f2f3;border-color:#3f3f46">Again</button>';
     }
     actions.addEventListener("click", function (e) {
       const id = e.target && e.target.id;
       if (id === "go") setCatch("wait12");
-      if (id === "big") setCatch("wait2400");
       if (id === "allow") setCatch("allowed");
       if (id === "block") setCatch("blocked");
+      if (id === "big") setCatch("wait2400");
       if (id === "reset") setCatch("idle");
     });
-
-    document.getElementById("badge-btn").addEventListener("click", function () {
-      const sell = document.getElementById("sell").value || "paid API";
-      const rail = document.getElementById("rail").value;
-      document.getElementById("badge-line").textContent =
-        "Pays only if the agent is leashed. You keep the keys. Agent Control checks the cap before we take USDC on " + rail + " for " + sell + ".";
-      document.getElementById("verify-json").textContent = JSON.stringify({
-        leashed: true,
-        pack: "research",
-        max_per_pay_usd: 80,
-        daily_cap_usd: 400,
-        open_waits: 0,
-        keys: "held_by_owner",
-        sandbox: true,
-        verify: "NOT production — example only"
-      }, null, 2);
-    });
-
-    function markTab() {
-      const id = (location.hash || "#verdict").replace("#", "");
-      ["verdict", "catch", "gate"].forEach(function (t) {
-        var el = document.getElementById("tab-" + t);
-        if (el) el.classList.toggle("on", t === id);
-      });
-    }
-    window.addEventListener("hashchange", markTab);
-    markTab();
   </script>
 </body>
 </html>

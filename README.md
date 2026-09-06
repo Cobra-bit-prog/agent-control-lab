@@ -1,13 +1,8 @@
 # Agent Control lab (sandbox)
 
-Front door: Verdict, Catch, Gate.
+Landing: leash headline, watch-it-wait, last week, packs, pricing, seller line.
 
-**Not production.** Live site: https://agent-control.net
+**Not production.** Live: https://agent-control.net
+Pages: https://cobra-bit-prog.github.io/agent-control-lab/
 
-Open: https://cobra-bit-prog.github.io/agent-control-lab/
-
-- `#verdict` paste a wallet (sample numbers)
-- `#catch` watch a pay wait
-- `#gate` seller badge
-
-Do not send real funds. No KYC. No card.
+If the old tour is cached, hard-refresh.

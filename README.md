@@ -1,8 +1,9 @@
 # Agent Control lab (sandbox)
 
-Landing: leash headline, watch-it-wait, last week, packs, pricing, seller line.
+Clone of the live landing (dark navy + coral) plus three new blocks:
 
-**Not production.** Live: https://agent-control.net
-Pages: https://cobra-bit-prog.github.io/agent-control-lab/
+1. Paste the wallet — just below the hero
+2. A new address waits on you
+3. Take money only from leashed agents
 
-If the old tour is cached, hard-refresh.
+Live site is untouched: https://agent-control.net

@@ -3,257 +3,105 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#eef3f8" />
   <title>Agent Control — sandbox</title>
-  <meta name="theme-color" content="#07090f" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --bg: #07090f;
-      --surface: #10141c;
-      --elevated: #161c27;
-      --fg: #e8eef8;
-      --muted: #8b96ab;
-      --subtle: #667085;
-      --border: #1e2633;
-      --coral: #e85d4c;
-      --blue: #3b82f6;
-      --ok: #10b981;
-      --warn: #f59e0b;
-      --navy: #1e3a5f;
-    }
-    * { box-sizing: border-box; }
-    html, body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.5 "Instrument Sans", system-ui, sans-serif; }
-    a { color: inherit; text-decoration: none; }
-    button { font: inherit; cursor: pointer; }
-    .banner { background: #10141c; border-bottom: 1px solid var(--border); color: var(--muted); text-align: center; font-size: 13px; padding: 8px 14px; }
-    .banner a { color: #f3c4bd; }
-    .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
-    header.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 0; }
-    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; }
-    .mark { width: 28px; height: 28px; border-radius: 8px; background: linear-gradient(135deg, #3b82f6, #e85d4c); display: grid; place-items: center; font-size: 13px; }
-    nav { display: flex; flex-wrap: wrap; align-items: center; gap: 18px; color: var(--muted); font-size: 14px; }
-    nav a:hover { color: var(--fg); }
-    .btn { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; border-radius: 10px; padding: 10px 16px; border: 0; background: var(--coral); color: #fff; font-weight: 600; font-size: 14px; }
-    .btn.ghost { background: transparent; color: var(--fg); border: 1px solid var(--border); }
-    .hero { display: grid; gap: 40px; padding: 36px 0 48px; background:
-      radial-gradient(920px 460px at 6% -16%, #f59e0b1c, transparent 56%),
-      radial-gradient(720px 380px at 14% -10%, #3b82f62e, transparent 58%),
-      radial-gradient(520px 280px at 90% 10%, #10b98117, transparent 50%); }
-    @media (min-width: 980px) { .hero { grid-template-columns: 1.05fr .95fr; align-items: center; } }
-    h1 { font-size: clamp(36px, 5vw, 58px); line-height: 1.08; letter-spacing: -.03em; font-weight: 600; margin: 0 0 14px; }
-    h2 { font-size: clamp(26px, 3.5vw, 36px); letter-spacing: -.02em; font-weight: 600; margin: 0 0 10px; }
-    .lede { color: var(--muted); max-width: 34rem; }
-    .pills { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 22px; color: var(--muted); font-size: 13px; }
-    .pills span { display: inline-flex; align-items: center; gap: 6px; }
-    .ok { color: var(--ok); } .bad { color: var(--coral); }
-    .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 18px; box-shadow: 0 18px 40px -24px #000000b3; }
-    .stat { background: var(--elevated); border-radius: 12px; padding: 12px 14px; }
-    .stat b { display: block; font-size: 22px; margin-top: 4px; }
-    .muted { color: var(--muted); }
-    .subtle { color: var(--subtle); font-size: 12px; }
-    .kicker { color: var(--subtle); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; font-weight: 700; }
-    .alert { margin-top: 14px; border: 1px solid #3a2a1a; background: #1a140e; border-radius: 12px; padding: 12px 14px; }
-    .grid { display: grid; gap: 12px; }
-    @media (min-width: 800px) {
-      .g2 { grid-template-columns: 1fr 1fr; }
-      .g3 { grid-template-columns: repeat(3, 1fr); }
-      .g4 { grid-template-columns: repeat(4, 1fr); }
-    }
-    .section { padding: 64px 0; border-top: 1px solid var(--border); }
-    .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
-    .tabs button { background: transparent; color: var(--muted); border: 1px solid var(--border); border-radius: 999px; padding: 8px 14px; }
-    .tabs button.on { color: var(--fg); background: var(--elevated); }
-    input, select { width: 100%; background: var(--elevated); color: var(--fg); border: 1px solid var(--border); border-radius: 10px; padding: 12px; font: inherit; }
-    .row { display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 10px 0; border-top: 1px solid var(--border); }
-    .chip { display: inline-block; border-radius: 999px; padding: 2px 8px; font-size: 12px; font-weight: 700; }
-    .chip.fine { background: #0f2a22; color: #6ee7b7; }
-    .chip.wait { background: #2a2110; color: #fbbf24; }
-    .chip.stop { background: #2a1412; color: #fca5a5; }
-    .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 13px; }
-    .log { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 13px; line-height: 1.65; min-height: 6.2em; white-space: pre-wrap; margin: 12px 0 0; }
-    .price { font-size: 28px; font-weight: 700; margin: 8px 0; }
-    details { border-top: 1px solid var(--border); padding: 12px 0; }
-    summary { cursor: pointer; font-weight: 600; }
-    footer { padding: 28px 0 48px; color: var(--muted); font-size: 13px; border-top: 1px solid var(--border); }
-    .bars { display: flex; align-items: end; gap: 6px; height: 88px; margin-top: 10px; }
-    .bars i { flex: 1; display: block; border-radius: 3px 3px 0 0; background: #5b8def; }
-  </style>
+  <link rel="stylesheet" href="./styles-live.css" />
+  <style>html, body { background: #eef3f8 !important; }</style>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&display=swap" />
 </head>
-<body>
-  <div class="banner">Sandbox — live site is untouched: <a href="https://agent-control.net">agent-control.net</a></div>
-  <div class="wrap">
-    <header class="top">
-      <a class="brand" href="#home"><span class="mark">⌘</span> Agent Control</a>
-      <nav>
-        <a href="https://agent-control.net/docs">Docs</a>
-        <a href="https://agent-control.net/partners">Partners</a>
-        <a href="#pricing">Pricing</a>
-        <a href="mailto:support@agent-control.net">Contact</a>
-        <a href="https://agent-control.net/login">Sign in</a>
-        <a class="btn" href="https://agent-control.net/login">Try free</a>
-      </nav>
-    </header>
-
-    <section class="hero" id="home">
-      <div>
-        <h1>External audit for your agents</h1>
-        <p class="lede">Not a package scanner — this is spend control for agent wallets.</p>
-        <p class="lede">Keep control of your agents’ spending. You set the limits. Suspicious transactions show up as alerts.</p>
-        <p class="lede" style="margin-top:10px">Agent payments control — spend limits you set, and you keep the keys.</p>
-        <p style="margin-top:22px"><a class="btn" href="https://agent-control.net/login">Start free trial →</a></p>
-        <p class="subtle" style="margin-top:12px">1-day (24 hour) trial, then pay on-chain. No card. No KYC.</p>
-        <div class="pills">
-          <span class="ok">✓ Within policy = auto</span>
-          <span class="bad">✕ Outside policy = stop</span>
-          <span>🔑 Keys stay with you</span>
-        </div>
-        <p class="subtle">Works on · Solana · Ethereum · Base</p>
-      </div>
-      <div class="panel">
-        <div class="grid g2">
-          <div class="stat"><span class="muted">Spent today</span><b>$1,240</b></div>
-          <div class="stat"><span class="muted">Within policy</span><b class="ok">Today</b></div>
-        </div>
-        <div class="bars" aria-hidden="true">
-          <i style="height:32%"></i><i style="height:48%"></i><i style="height:40%"></i><i style="height:62%"></i>
-          <i style="height:55%"></i><i style="height:78%"></i><i style="height:46%"></i><i style="height:38%"></i>
-        </div>
-        <div class="alert">
-          <strong>Review alert</strong>
-          <p class="muted" style="margin:6px 0 10px">Transfer blocked · $2,400 to unknown address</p>
-          <a class="btn" href="#catch">Review</a>
-        </div>
-        <p class="subtle" style="margin-top:12px">Policy · Daily cap $5,000 · Per-tx cap $2,000 · Keys held by you</p>
-      </div>
-    </section>
+<body class="bg-bg text-fg antialiased">
+<div class="sky min-h-screen bg-bg text-fg"><div class="border-b border-border bg-navy px-4 py-2 text-center text-[13px] text-white">Sandbox — live site is untouched · <a class="underline" href="https://agent-control.net">agent-control.net</a></div><header class="mx-auto flex max-w-[1140px] items-center justify-between gap-3 px-5 py-[18px] md:px-6"><a href="https://agent-control.net/" aria-label="Agent Control home" class="gap-3 inline-flex min-h-11 items-center"><svg viewBox="0 0 32 32" class="shrink-0 size-10 text-navy" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M16 2.2 26.7 6.5v8.3c0 6.7-4.7 12.2-10.7 14.1C10 27 5.3 21.5 5.3 14.8V6.5L16 2.2Zm0 9.9a3.3 3.3 0 1 0 0 6.6 3.3 3.3 0 0 0 0-6.6ZM7.5 14.55h5.05v1.7H7.5zm11.95 0H24.5v1.7h-5.05z"></path><circle cx="16" cy="15.4" r="1.45" fill="currentColor"></circle></svg><span class="font-semibold tracking-tight text-xl md:text-2xl">Agent Control</span></a><nav class="hidden items-center text-sm font-medium text-muted md:flex"><a href="https://agent-control.net/docs" class="ml-4 hover:text-fg">Docs</a><a href="https://agent-control.net/partners" class="ml-4 hover:text-fg">Partners</a><a href="#pricing" class="ml-4 hover:text-fg">Pricing</a><a href="mailto:support@agent-control.net" class="ml-4 hover:text-fg">Contact</a></nav><div class="flex items-center gap-2"><a href="https://agent-control.net/login" class="items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-[opacity,transform,background-color,border-color] duration-150 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 text-muted hover:bg-elevated hover:text-fg h-10 px-4 hidden rounded-full sm:inline-flex">Sign in</a><a href="https://agent-control.net/signup" class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-[opacity,transform,background-color,border-color] duration-150 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 bg-primary text-primary-fg hover:opacity-90 active:scale-[0.98] h-10 px-4 rounded-full">Try free</a><button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--radius-sm)] text-sm font-medium transition-[opacity,transform,background-color,border-color] duration-150 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 text-muted hover:bg-elevated hover:text-fg h-10 w-10 md:hidden" aria-label="Open menu"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-menu" aria-hidden="true"><path d="M4 12h16"></path><path d="M4 18h16"></path><path d="M4 6h16"></path></svg></button></div></header><section class="landing-hero mx-auto max-w-[1140px] px-5 pb-7 pt-6 md:px-6"><div class="grid items-center gap-8 lg:grid-cols-[1.14fr_0.96fr]"><div><h1 class="landing-rise text-[clamp(32px,4.6vw,54px)] font-semibold leading-[1.08] tracking-[-0.035em] text-balance text-fg">External audit for your agents</h1><p class="landing-rise mt-3 max-w-[44ch] text-base font-medium leading-snug text-navy">Not a package scanner — this is spend control for agent wallets.</p><p class="landing-rise mt-3 max-w-[44ch] text-lg leading-snug text-muted">Keep control of your agents’ spending. You set the limits. Suspicious transactions show up as alerts.</p><p class="landing-rise mt-2.5 max-w-[44ch] text-[15px] leading-snug text-muted">Agent payments control — spend limits you set, and you keep the keys.</p><div class="landing-rise mt-5 flex flex-wrap items-center gap-3"><a href="https://agent-control.net/signup" class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-[opacity,transform,background-color,border-color] duration-150 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 bg-primary text-primary-fg hover:opacity-90 active:scale-[0.98] h-11 px-5 rounded-full">Start free trial<span aria-hidden="true">→</span></a></div><p class="landing-rise mt-2 text-xs font-medium leading-snug text-muted">1-day (24 hour) trial, then pay on-chain. No card. No KYC.</p><div class="landing-rise mt-4 flex flex-wrap gap-1"><span class="mt-1 mr-1 inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border border-border bg-white px-2.5 py-1.5 text-[12.5px] text-fg shadow-[0_1px_0_rgb(18_38_63/0.04)]"><i class="inline-grid size-[18px] place-items-center rounded-full bg-[#dcfce7] text-[10px] font-bold not-italic text-[#166534]">✓</i>Within policy = auto</span><span class="mt-1 mr-1 inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border border-border bg-white px-2.5 py-1.5 text-[12.5px] text-fg shadow-[0_1px_0_rgb(18_38_63/0.04)]"><i class="inline-grid size-[18px] place-items-center rounded-full bg-[#fde8e6] text-[10px] font-bold not-italic text-danger">✕</i>Outside policy = stop</span><span class="mt-1 mr-1 inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border border-border bg-white px-2.5 py-1.5 text-[12.5px] text-fg shadow-[0_1px_0_rgb(18_38_63/0.04)]"><i class="inline-grid size-[18px] place-items-center rounded-full bg-[#e8eef6] text-[10px] font-bold not-italic text-navy">🔑</i>Keys stay with you</span></div><div class="flex flex-wrap items-center gap-x-3 gap-y-2 landing-rise mt-5"><p class="text-xs font-medium text-muted">Works on</p><ul class="flex flex-wrap items-center gap-1.5" aria-label="Supported networks: Solana, Ethereum, and Base"><li class="inline-flex items-center gap-1.5 rounded-full border border-border bg-white px-2.5 py-1 text-[13px] text-fg shadow-[0_1px_0_rgb(18_38_63/0.04)]"><svg viewBox="0 0 32 32" class="shrink-0 size-4" aria-hidden="true"><defs><linearGradient id="sol-_R_1d16cl6_" x1="6" y1="8" x2="26" y2="24" gradientUnits="userSpaceOnUse"><stop stop-color="#14F195"></stop><stop offset="1" stop-color="#9945FF"></stop></linearGradient></defs><path fill="url(#sol-_R_1d16cl6_)" d="M7.4 9.2h15.2l3.2 3.6H10.6z"></path><path fill="url(#sol-_R_1d16cl6_)" d="M7.4 14.2h15.2l3.2 3.6H10.6z"></path><path fill="url(#sol-_R_1d16cl6_)" d="M7.4 19.2h15.2l3.2 3.6H10.6z"></path></svg>Solana</li><li class="inline-flex items-center gap-1.5 rounded-full border border-border bg-white px-2.5 py-1 text-[13px] text-fg shadow-[0_1px_0_rgb(18_38_63/0.04)]"><svg viewBox="0 0 32 32" class="shrink-0 size-4" aria-hidden="true"><path fill="#8C93C0" d="M16 3.2 24.9 16.3 16 21.4z"></path><path fill="#627EEA" d="M16 3.2 7.1 16.3 16 21.4z"></path><path fill="#8C93C0" d="M16 22.6 24.9 17.5 16 28.8z"></path><path fill="#3C4270" d="M16 22.6 7.1 17.5 16 28.8z"></path></svg>Ethereum</li><li class="inline-flex items-center gap-1.5 rounded-full border border-border bg-white px-2.5 py-1 text-[13px] text-fg shadow-[0_1px_0_rgb(18_38_63/0.04)]"><svg viewBox="0 0 32 32" class="shrink-0 size-4" aria-hidden="true"><rect x="4" y="4" width="24" height="24" rx="7" fill="#0052FF"></rect></svg>Base</li></ul></div></div><div class="min-w-0"><div class="rounded-[20px] border border-border bg-surface p-[22px] shadow-[0_28px_56px_-28px_rgb(18_38_63/0.32)]"><div class="flex items-start justify-between gap-3"><div><p class="text-[13px] text-muted">Spent today</p><p class="mt-0.5 text-[34px] font-bold leading-none tracking-tight">$1,240</p><span class="mt-2 inline-flex items-center rounded-full bg-[#dcfce7] px-2 py-0.5 text-xs font-medium text-[#166534]">Within policy</span></div><span class="rounded-full border border-border bg-white px-2.5 py-1 text-xs text-muted">Today ▾</span></div><div class="mt-3.5 grid grid-cols-[40px_1fr] items-stretch gap-2"><div class="flex flex-col justify-between py-0.5 text-right text-[11px] text-subtle"><span>$1.5k</span><span>$1k</span><span>$500</span><span>$0</span></div><div class="flex h-24 items-end gap-2"><i class="block flex-1 rounded-[3px] bg-chart not-italic" style="height:18%"></i><i class="block flex-1 rounded-[3px] bg-chart not-italic" style="height:24%"></i><i class="block flex-1 rounded-[3px] bg-chart not-italic" style="height:22%"></i><i class="block flex-1 rounded-[3px] bg-chart not-italic" style="height:30%"></i><i class="block flex-1 rounded-[3px] bg-chart not-italic" style="height:38%"></i><i class="block flex-1 rounded-[3px] bg-chart not-italic" style="height:52%"></i><i class="block flex-1 rounded-[3px] bg-chart not-italic" style="height:68%"></i><i class="block flex-1 rounded-[3px] bg-chart not-italic" style="height:86%"></i><i class="block flex-1 rounded-[3px] bg-chart not-italic" style="height:62%"></i><i class="block flex-1 rounded-[3px] bg-chart not-italic" style="height:74%"></i><i class="block flex-1 rounded-[3px] bg-chart not-italic" style="height:48%"></i><i class="block flex-1 rounded-[3px] bg-chart not-italic" style="height:40%"></i><i class="block flex-1 rounded-[3px] bg-chart not-italic" style="height:34%"></i><i class="block flex-1 rounded-[3px] bg-chart not-italic" style="height:28%"></i><i class="block flex-1 rounded-[3px] bg-chart not-italic" style="height:24%"></i><i class="block flex-1 rounded-[3px] bg-chart not-italic" style="height:18%"></i></div></div><div class="mt-1.5 flex justify-between pl-[48px] text-[11px] text-subtle"><span>12 AM</span><span>6 AM</span><span>12 PM</span><span>6 PM</span><span>12 AM</span></div><div class="mt-4 flex items-center gap-3 rounded-[14px] border border-[#f6c9c2] bg-[#fdecea] px-3.5 py-3"><span class="grid size-8 shrink-0 place-items-center rounded-full bg-coral text-sm font-bold text-white">!</span><div class="min-w-0 flex-1"><strong class="block text-[13px] text-danger">Review alert</strong><p class="mt-0.5 text-[13px] leading-snug text-fg">Transfer blocked<span class="block sm:inline sm:before:content-['\00a0']">$2,400 to unknown address</span></p></div><a href="https://agent-control.net/signup" class="ml-auto inline-flex h-9 shrink-0 items-center rounded-full bg-coral px-3.5 text-sm font-semibold text-white">Review</a></div><div class="mt-3.5 grid gap-3 border-t border-border pt-3.5 sm:grid-cols-2"><div><b class="flex items-center gap-1.5 text-[13px] text-fg"><span aria-hidden="true">🛡</span> Policy</b><p class="mt-0.5 text-xs leading-snug text-muted">Daily cap $5,000 · Per-tx cap $2,000</p></div><div><b class="flex items-center gap-1.5 text-[13px] text-fg"><span class="grid size-[18px] place-items-center rounded-full bg-[#dcfce7] text-[10px] font-bold text-[#166534]">✓</span>Keys</b><p class="mt-0.5 text-xs leading-snug text-muted">Held by you · Check before every send</p></div></div></div></div></div></section>
+<section id="week" class="border-t border-border bg-white/40">
+  <div class="mx-auto max-w-[1140px] px-5 py-12 md:px-6">
+    <p class="text-xs font-semibold uppercase tracking-[0.16em] text-navy">New</p>
+    <h2 class="mt-2 text-2xl font-semibold tracking-tight md:text-3xl">Paste the wallet. See what would not have left.</h2>
+    <p class="mt-2 max-w-2xl text-muted">Example week from a research agent — or paste yours. Read-only. We never hold the keys.</p>
+    <form id="week-form" class="mt-6 flex max-w-2xl flex-col gap-3 sm:flex-row">
+      <input id="addr" placeholder="Paste a wallet" class="h-11 flex-1 rounded-full border border-border bg-white px-4 text-sm text-fg outline-none" />
+      <button type="submit" class="inline-flex h-11 items-center justify-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-fg">Open an example</button>
+    </form>
+    <div id="week-out" class="mt-5 max-w-2xl"></div>
   </div>
-
-  <section class="section" id="week" style="background:#0b1018">
-    <div class="wrap">
-      <p class="kicker">New</p>
-      <h2>Paste the wallet. See what would not have left.</h2>
-      <p class="lede">Example week from a research agent — or paste yours. Read-only. We never hold the keys.</p>
-      <form id="week-form" class="grid" style="grid-template-columns:1fr auto; max-width:720px; margin-top:18px">
-        <input id="addr" placeholder="Paste a wallet" />
-        <button class="btn" type="submit">Open an example</button>
-      </form>
-      <div id="week-out" style="margin-top:16px; max-width:720px"></div>
+</section>
+<section class="mx-auto max-w-[1140px] px-5 pb-9 pt-1 md:px-6" aria-label="Product"><div class="max-w-full overflow-x-auto"><div role="tablist" aria-label="Product" class="inline-flex rounded-full border border-border bg-white p-1 shadow-[0_1px_0_rgb(18_38_63/0.04)]"><button type="button" role="tab" id="tab-dashboard" aria-selected="true" aria-controls="panel-dashboard" class="shrink-0 whitespace-nowrap rounded-full bg-navy px-3.5 py-2 text-sm font-semibold text-white sm:px-4">Dashboard</button><button type="button" role="tab" id="tab-audit" aria-selected="false" aria-controls="panel-audit" class="shrink-0 whitespace-nowrap rounded-full px-3.5 py-2 text-sm font-semibold text-muted hover:text-fg sm:px-4">Agent Audit</button><button type="button" role="tab" id="tab-inbox" aria-selected="false" aria-controls="panel-inbox" class="shrink-0 whitespace-nowrap rounded-full px-3.5 py-2 text-sm font-semibold text-muted hover:text-fg sm:px-4">Approval Inbox</button></div></div><div role="tabpanel" id="panel-dashboard" aria-labelledby="tab-dashboard" class="mt-4 grid gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-start"><div><h2 class="text-2xl font-semibold tracking-tight md:text-3xl">Dashboard</h2><p class="mt-2 max-w-[42ch] text-muted">Monitoring and spend overview for enrolled agents. See what is within policy, what is over a cap, and which alerts need a look.</p><p class="mt-3 text-sm text-muted">Warning alerts are optional. Turn them on if you want a ping for suspicious or over-limit activity — you can leave them off. After you sign in, Email alerts in Settings is the real switch (this preview does not send mail).</p><a href="https://agent-control.net/signup" class="mt-5 inline-flex items-center text-[13px] font-semibold text-navy hover:text-coral">Open the console →</a></div><div class="rounded-[20px] border border-border bg-surface p-[22px] shadow-[0_16px_40px_-20px_rgb(18_38_63/0.18)]"><div class="mb-2 flex items-center justify-between"><p class="text-sm font-semibold">Overview</p><span class="rounded-full border border-border bg-white px-2.5 py-0.5 text-[11px] text-muted">Today ▾</span></div><div class="grid grid-cols-3 gap-2 border-t border-border pt-3"><div><p class="text-[11px] text-muted">Spent today</p><p class="mt-0.5 text-lg font-semibold tracking-tight">$1,240</p></div><div><p class="text-[11px] text-muted">Daily cap</p><p class="mt-0.5 text-lg font-semibold tracking-tight">$5,000</p></div><div><p class="text-[11px] text-muted">Open alerts</p><p class="mt-0.5 text-lg font-semibold tracking-tight text-danger">1</p></div></div><div class="mt-3"><div class="mb-1.5 flex items-center justify-between text-[11px] text-muted"><span>Spend vs policy</span><span class="font-medium text-success">Within policy</span></div><div class="h-2 overflow-hidden rounded-full bg-[#e8eef6]"><div class="h-full w-[25%] rounded-full bg-chart"></div></div></div><ul class="mt-3"><li class="flex items-center justify-between gap-2 border-t border-border py-2.5"><div><b class="block text-[13px]">Treasury Bot</b><span class="text-xs text-muted">$8,140<!-- --> today</span></div><span class="text-xs font-semibold text-warning">68%<!-- --> of cap</span></li><li class="flex items-center justify-between gap-2 border-t border-border py-2.5"><div><b class="block text-[13px]">Solana Router</b><span class="text-xs text-muted">$1,080<!-- --> today</span></div><span class="text-xs font-semibold text-success">13%<!-- --> of cap</span></li></ul><div class="mt-1 flex items-start justify-between gap-3 rounded-[14px] border border-border bg-elevated px-3.5 py-3"><div class="min-w-0"><p class="text-[13px] font-semibold">Warning alerts</p><p class="mt-0.5 text-xs leading-snug text-muted">Optional. Suspicious or over-limit activity — only if you want the ping.</p></div><button type="button" role="switch" aria-checked="true" aria-label="Warning alerts" class="relative h-6 w-10 shrink-0 rounded-full bg-coral"><span class="absolute top-0.5 right-0.5 block size-5 rounded-full bg-white"></span></button></div><div class="mt-2.5 flex items-center gap-2.5 rounded-[14px] border border-[#f6c9c2] bg-[#fdecea] px-3.5 py-2.5"><span class="grid size-7 shrink-0 place-items-center rounded-full bg-coral text-xs font-bold text-white">!</span><div class="min-w-0"><strong class="block text-[13px] text-danger">Warning alert</strong><p class="text-xs leading-snug text-fg">Suspicious spend · Treasury Bot over limit</p></div></div><p class="mt-2 text-[11px] text-subtle">Preview only — this toggle does not send email. After you sign in, Email alerts in Settings is the real switch.</p></div></div></section>
+<section id="catch" class="border-t border-border">
+  <div class="mx-auto grid max-w-[1140px] items-center gap-8 px-5 py-16 md:grid-cols-2 md:px-6">
+    <div>
+      <p class="text-xs font-semibold uppercase tracking-[0.16em] text-navy">New</p>
+      <h2 class="mt-2 text-2xl font-semibold tracking-tight md:text-3xl">A new address waits on you.</h2>
+      <p class="mt-2 max-w-[42ch] text-muted">The agent wants to pay. You have not seen this address. Money does not leave until you tap.</p>
+      <p class="mt-3 text-xs text-subtle">Example only. No real money moves.</p>
     </div>
-  </section>
-
-  <div class="wrap">
-    <section class="section" id="products">
-      <div class="tabs">
-        <button class="on" type="button">Dashboard</button>
-        <button type="button">Agent Audit</button>
-        <button type="button">Approval Inbox</button>
-      </div>
-      <h2>Dashboard</h2>
-      <p class="lede">Monitoring and spend overview for enrolled agents. See what is within policy, what is over a cap, and which alerts need a look.</p>
-      <p class="muted" style="margin-top:10px;max-width:40rem">Warning alerts are optional. Turn them on if you want a ping for suspicious or over-limit activity.</p>
-      <p style="margin-top:16px"><a href="https://agent-control.net/login">Open the console →</a></p>
-      <div class="grid g3" style="margin-top:22px">
-        <div class="stat"><span class="muted">Spent today</span><b>$1,240</b></div>
-        <div class="stat"><span class="muted">Daily cap</span><b>$5,000</b></div>
-        <div class="stat"><span class="muted">Open alerts</span><b>1</b></div>
-      </div>
-    </section>
-  </div>
-
-  <section class="section" id="catch">
-    <div class="wrap grid g2" style="align-items:center">
-      <div>
-        <p class="kicker">New</p>
-        <h2>A new address waits on you.</h2>
-        <p class="lede">The agent wants to pay. You have not seen this address. Money does not leave until you tap.</p>
-        <p class="subtle" style="margin-top:10px">Example only. No real money moves.</p>
-      </div>
-      <div class="panel">
-        <p class="muted">Research agent · $80 per pay · $400 a day</p>
-        <div id="catch-log" class="log">Tap Go. The agent tries to pay a license fee.</div>
-        <p id="catch-actions" style="margin-top:14px"><button class="btn" type="button" id="go">Go</button></p>
+    <div class="rounded-[20px] border border-border bg-surface p-[22px] shadow-[0_16px_40px_-20px_rgb(18_38_63/0.18)]">
+      <p class="text-[13px] text-muted">Research agent · $80 per pay · $400 a day</p>
+      <pre id="catch-log" class="mt-4 min-h-[6.5em] whitespace-pre-wrap font-mono text-[13px] leading-relaxed text-fg">Tap Go. The agent tries to pay a license fee.</pre>
+      <div id="catch-actions" class="mt-4 flex flex-wrap gap-2">
+        <button type="button" id="go" class="inline-flex h-10 items-center rounded-full bg-primary px-4 text-sm font-semibold text-primary-fg">Go</button>
       </div>
     </div>
-  </section>
-
-  <div class="wrap">
-    <section class="section" id="how">
-      <h2>How it works</h2>
-      <p class="lede">Four steps. No custody. The agent has to ask before it sends.</p>
-      <div class="grid g4" style="margin-top:28px">
-        <div><p class="subtle">01</p><h3>Enroll a wallet</h3><p class="muted">Paste a live address. We pull native balance and recent transfers.</p></div>
-        <div><p class="subtle">02</p><h3>Set policy</h3><p class="muted">Cap daily spend, restrict destinations, set hourly velocity.</p></div>
-        <div><p class="subtle">03</p><h3>Connect your agent</h3><p class="muted">API key so it checks before every spend — you keep the keys.</p></div>
-        <div><p class="subtle">04</p><h3>Watch + pause</h3><p class="muted">On-chain sync and decisions in one feed. Pause from the console.</p></div>
-      </div>
-    </section>
-
-    <section class="section" id="pricing">
-      <h2>1-day trial, then on-chain.</h2>
-      <p class="lede">24 hours free. No card. No KYC. USDC on Solana, or native SOL / ETH.</p>
-      <div class="grid g4" style="margin-top:24px">
-        <div class="panel"><p class="muted">Trial</p><p class="price">1 day</p><p class="muted">Full console for 1 day.</p><p><a class="btn" href="https://agent-control.net/login">Start free trial</a></p></div>
-        <div class="panel"><p class="muted">Starter</p><p class="price">$29/mo</p><p class="muted">Small agent fleet.</p></div>
-        <div class="panel"><p class="muted">Pro</p><p class="price">$49/mo</p><p class="muted">Priority alerts.</p></div>
-        <div class="panel"><p class="muted">Team</p><p class="price">$149/mo</p><p class="muted">Builder + Approver.</p></div>
-      </div>
-    </section>
-
-    <section class="section" id="sellers">
-      <p class="kicker">New · if agents pay you</p>
-      <h2>Take money only from agents that have a leash.</h2>
-      <p class="lede">You keep your own checkout. We only answer: is this agent capped, and does a human see new addresses?</p>
-      <div class="panel" style="margin-top:18px;max-width:640px">
-        Pays only if the agent is leashed. You keep the keys. Agent Control checks the cap before we take USDC.
-      </div>
-    </section>
-
-    <section class="section" id="faq">
-      <h2>Questions operators ask</h2>
-      <details open><summary>Do you hold my keys?</summary><p class="muted">No. We are not a custodian. You keep the keys.</p></details>
-      <details><summary>What if the agent skips the check?</summary><p class="muted">If the agent skips the check, Inbox cannot stop that pay. Pause the agent from the console.</p></details>
-      <details><summary>Is the trial free?</summary><p class="muted">Yes. One day. No card. No KYC.</p></details>
-    </section>
-
-    <footer>
-      Agent Control · Monitoring and policy checks. Not a custodian. Not insurance.<br />
-      Sandbox only. Live product: <a href="https://agent-control.net">agent-control.net</a> · support@agent-control.net
-    </footer>
   </div>
-  <script>
-    document.getElementById("week-form").addEventListener("submit", function (e) {
-      e.preventDefault();
-      document.getElementById("week-out").innerHTML =
-        '<div class="panel"><p class="muted">Example week · research agent</p><p style="margin:8px 0 0"><strong>2 fine, 1 would wait, 1 would stop. $9,100 would not have left.</strong></p>' +
-        [["fine",180,"USDC to a known market maker"],["fine",12,"SOL rent for a program account"],["wait",2400,"First-time address"],["stop",9100,"Over the daily cap"]].map(function (r) {
-          return '<div class="row"><span class="chip ' + r[0] + '">' + r[0] + '</span><span class="mono">$' + r[1].toLocaleString() + "</span></div><p class=\"muted\" style=\"margin:0 0 8px\">" + r[2] + "</p>";
-        }).join("") + "</div>";
-    });
-    const log = document.getElementById("catch-log");
-    const actions = document.getElementById("catch-actions");
-    function setCatch(step) {
-      const lines = {
-        idle: "Tap Go. The agent tries to pay a license fee.",
-        wait12: "Wants $12 · new address\nWaiting on you\n$12 would leave.",
-        allowed: "Allowed this once.\nNext time this address waits again.",
-        blocked: "Stopped. $12 did not leave.",
-        wait2400: "Trade Agent Alpha · Tuesday\nWants $2,400 · new address\nWaiting on you"
-      };
-      log.textContent = lines[step];
-      if (step === "idle") actions.innerHTML = '<button class="btn" type="button" id="go">Go</button>';
-      else if (step === "wait12" || step === "wait2400") actions.innerHTML = '<button class="btn" type="button" id="allow">Allow once</button> <button class="btn ghost" type="button" id="block">Block</button>';
-      else actions.innerHTML = '<button class="btn" type="button" id="big">See the $2,400 one</button> <button class="btn ghost" type="button" id="reset">Again</button>';
-    }
-    actions.addEventListener("click", function (e) {
-      const id = e.target && e.target.id;
-      if (id === "go") setCatch("wait12");
-      if (id === "allow") setCatch("allowed");
-      if (id === "block") setCatch("blocked");
-      if (id === "big") setCatch("wait2400");
-      if (id === "reset") setCatch("idle");
-    });
-  </script>
+</section>
+<section id="how" class="border-t border-border"><div class="mx-auto max-w-[1140px] px-5 py-16 md:px-6"><h2 class="text-2xl font-semibold tracking-tight md:text-3xl">How it works</h2><p class="mt-2 max-w-2xl text-muted">Four steps. No custody. The agent has to ask before it sends.</p><ol class="mt-8 grid gap-4 md:grid-cols-4"><li class="rounded-[20px] border border-border bg-surface p-5"><p class="font-mono text-xs text-navy">01</p><h3 class="mt-3 font-medium">Enroll a wallet</h3><p class="mt-1 text-sm text-muted">Paste a live address. We pull native balance and recent transfers.</p></li><li class="rounded-[20px] border border-border bg-surface p-5"><p class="font-mono text-xs text-navy">02</p><h3 class="mt-3 font-medium">Set policy</h3><p class="mt-1 text-sm text-muted">Cap daily spend, restrict destinations, set hourly velocity.</p></li><li class="rounded-[20px] border border-border bg-surface p-5"><p class="font-mono text-xs text-navy">03</p><h3 class="mt-3 font-medium">Connect your agent</h3><p class="mt-1 text-sm text-muted">Connect your agent with an API key so it checks Agent Control before every spend — you keep the keys.</p></li><li class="rounded-[20px] border border-border bg-surface p-5"><p class="font-mono text-xs text-navy">04</p><h3 class="mt-3 font-medium">Watch + pause</h3><p class="mt-1 text-sm text-muted">On-chain sync and pre-sign decisions land in one feed. Pause from the console.</p></li></ol></div></section><section id="pricing" class="border-t border-border"><div class="mx-auto max-w-[1140px] px-5 py-16 md:px-6"><h2 class="text-2xl font-semibold tracking-tight md:text-3xl">1-day trial, then on-chain.</h2><p class="mt-2 text-muted">24 hours free. No card. No KYC. USDC on Solana, or native SOL / ETH. Unique amount so the watcher can match.</p><div class="mt-8 grid gap-4 md:grid-cols-4"><div class="flex flex-col rounded-[20px] border bg-surface p-5 shadow-[0_16px_40px_-20px_rgb(18_38_63/0.18)] border-border"><p class="text-sm text-muted">Trial</p><p class="mt-3 text-3xl font-semibold tracking-tight">1 day</p><p class="mt-1 text-xs font-medium text-coral">24 hours · no card · no KYC</p><p class="mt-2 text-sm text-muted">Full console for 1 day. Then a paid plan is required to keep monitoring.</p><ul class="mt-4 flex-1 space-y-2 text-sm text-muted"><li class="flex gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check size-4 text-success" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>2<!-- --> agent wallets</li><li class="flex gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check size-4 text-success" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg><span class="whitespace-nowrap">7-day history</span></li><li class="flex gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check size-4 text-success" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>Policy + pre-sign hook</li></ul><a href="https://agent-control.net/signup" class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-[opacity,transform,background-color,border-color] duration-150 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 bg-elevated text-fg border border-border hover:bg-surface h-10 px-4 mt-6 rounded-full">Start free trial</a></div><div class="flex flex-col rounded-[20px] border bg-surface p-5 shadow-[0_16px_40px_-20px_rgb(18_38_63/0.18)] border-border"><p class="text-sm text-muted">Starter</p><p class="mt-3 text-3xl font-semibold tracking-tight">$29<span class="text-sm font-normal text-muted">/mo</span></p><p class="mt-2 text-sm text-muted">For operators running a small agent fleet.</p><ul class="mt-4 flex-1 space-y-2 text-sm text-muted"><li class="flex gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check size-4 text-success" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>5<!-- --> agent wallets</li><li class="flex gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check size-4 text-success" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg><span class="whitespace-nowrap">30-day history</span></li><li class="flex gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check size-4 text-success" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>Policy + pre-sign hook</li></ul><a href="https://agent-control.net/billing" class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-[opacity,transform,background-color,border-color] duration-150 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 bg-elevated text-fg border border-border hover:bg-surface h-10 px-4 mt-6 rounded-full">Pay USDC</a></div><div class="flex flex-col rounded-[20px] border bg-surface p-5 shadow-[0_16px_40px_-20px_rgb(18_38_63/0.18)] border-coral/50"><p class="text-sm text-muted">Pro</p><p class="mt-3 text-3xl font-semibold tracking-tight">$49<span class="text-sm font-normal text-muted">/mo</span></p><p class="mt-2 text-sm text-muted">Priority alerts and deeper history.</p><ul class="mt-4 flex-1 space-y-2 text-sm text-muted"><li class="flex gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check size-4 text-success" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>15<!-- --> agent wallets</li><li class="flex gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check size-4 text-success" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg><span class="whitespace-nowrap">90-day history</span></li><li class="flex gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check size-4 text-success" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>Policy + pre-sign hook</li></ul><a href="https://agent-control.net/billing" class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-[opacity,transform,background-color,border-color] duration-150 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 bg-primary text-primary-fg hover:opacity-90 active:scale-[0.98] h-10 px-4 mt-6 rounded-full">Pay on-chain</a></div><div class="flex flex-col rounded-[20px] border bg-surface p-5 shadow-[0_16px_40px_-20px_rgb(18_38_63/0.18)] border-border"><p class="text-sm text-muted">Team</p><p class="mt-3 text-3xl font-semibold tracking-tight">$149<span class="text-sm font-normal text-muted">/mo</span></p><p class="mt-2 text-sm text-muted">Multiple seats and higher limits.</p><ul class="mt-4 flex-1 space-y-2 text-sm text-muted"><li class="flex gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check size-4 text-success" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>50<!-- --> agent wallets</li><li class="flex gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check size-4 text-success" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg><span class="whitespace-nowrap">365-day history</span></li><li class="flex gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check size-4 text-success" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>Policy + pre-sign hook</li></ul><a href="https://agent-control.net/billing" class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-[opacity,transform,background-color,border-color] duration-150 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 bg-elevated text-fg border border-border hover:bg-surface h-10 px-4 mt-6 rounded-full">Pay on-chain</a></div></div><p class="mt-6 text-center text-sm text-muted">External audit for your agents — you keep the keys.</p></div></section>
+<section id="sellers" class="border-t border-border">
+  <div class="mx-auto max-w-[1140px] px-5 py-16 md:px-6">
+    <p class="text-xs font-semibold uppercase tracking-[0.16em] text-navy">New · if agents pay you</p>
+    <h2 class="mt-2 max-w-2xl text-2xl font-semibold tracking-tight md:text-3xl">Take money only from agents that have a leash.</h2>
+    <p class="mt-2 max-w-2xl text-muted">You keep your own checkout. We only answer: is this agent capped, and does a human see new addresses?</p>
+    <blockquote class="mt-6 max-w-2xl rounded-[20px] border border-border bg-surface p-5 text-sm leading-relaxed">Pays only if the agent is leashed. You keep the keys. Agent Control checks the cap before we take USDC.</blockquote>
+  </div>
+</section>
+<section id="faq" class="border-t border-border"><div class="mx-auto max-w-3xl px-6 py-16 md:px-10"><h2 class="text-2xl font-semibold tracking-tight md:text-3xl">Questions operators ask</h2><p class="mt-2 text-muted">Straight answers. Custody, Inbox, Audit, warning emails, compare, billing, and the signup email.</p><div class="faq mt-8 divide-y divide-border rounded-[22px] border border-border bg-surface"><div><button type="button" class="flex w-full items-start justify-between gap-4 px-5 py-4 text-left" aria-expanded="true"><span class="font-medium">Do you hold my keys?</span><span class="mt-0.5 text-muted">–</span></button><div class="px-5 pb-4 text-sm text-muted">No. We are not a custodian. You keep the keys. Agent Control scores a send against your policy and answers a check the agent must call before it spends.</div></div><div><button type="button" class="flex w-full items-start justify-between gap-4 px-5 py-4 text-left" aria-expanded="false"><span class="font-medium">Why didn’t I get an email when I signed up?</span><span class="mt-0.5 text-muted">+</span></button><div class="px-5 pb-4 text-sm text-muted hidden">You must confirm your email before the dashboard. After signup we keep you on a waiting screen until you click the link (one hour). If nothing arrives, check spam, then resend from that screen. Sign-in of an unconfirmed account sends a new link and returns you there.</div></div><div><button type="button" class="flex w-full items-start justify-between gap-4 px-5 py-4 text-left" aria-expanded="false"><span class="font-medium">Which chains are supported?</span><span class="mt-0.5 text-muted">+</span></button><div class="px-5 pb-4 text-sm text-muted hidden">Solana, Ethereum, and Base. Live wallets sync native balance and recent transfers. Demo wallets stay labeled so you can tour the console first.</div></div><div><button type="button" class="flex w-full items-start justify-between gap-4 px-5 py-4 text-left" aria-expanded="false"><span class="font-medium">How does the pre-sign hook work?</span><span class="mt-0.5 text-muted">+</span></button><div class="px-5 pb-4 text-sm text-muted hidden">Give the agent an API key. Before it signs, it POSTs /api/v1/check with the destination and value_usd. If the check says stop, do not send. Off-policy and first-time destinations can HOLD with a poll_url — you decide in /inbox. Pause and denylist are a hard block (never a hold).</div></div><div><button type="button" class="flex w-full items-start justify-between gap-4 px-5 py-4 text-left" aria-expanded="false"><span class="font-medium">What if the agent skips the check?</span><span class="mt-0.5 text-muted">+</span></button><div class="px-5 pb-4 text-sm text-muted hidden">Connect your agent so it asks before every send. You keep the keys. If the agent skips the check, Inbox cannot stop that send. Pause the agent from the console for a hard stop on your side. Hold waits for you; block means do not send.</div></div><div><button type="button" class="flex w-full items-start justify-between gap-4 px-5 py-4 text-left" aria-expanded="false"><span class="font-medium">What is Approval Inbox?</span><span class="mt-0.5 text-muted">+</span></button><div class="px-5 pb-4 text-sm text-muted hidden">Off-policy and first-time destinations wait in /inbox. Allow once for this send only, Always allow this address to write the allowlist, or Block. Holds expire in 10 minutes and are then treated as a block. Allow once is not permanent. Pause and denylist never wait here — they are a hard block.</div></div><div><button type="button" class="flex w-full items-start justify-between gap-4 px-5 py-4 text-left" aria-expanded="false"><span class="font-medium">What is Agent Audit?</span><span class="mt-0.5 text-muted">+</span></button><div class="px-5 pb-4 text-sm text-muted hidden">On-demand Excel, PDF, or CSV in /audit. Generate when you want it — nothing is auto-emailed. This is the Agent Control check and decision trail, not a full chain explorer or ghost replay.</div></div><div><button type="button" class="flex w-full items-start justify-between gap-4 px-5 py-4 text-left" aria-expanded="false"><span class="font-medium">Is this like agentaudit.dev?</span><span class="mt-0.5 text-muted">+</span></button><div class="px-5 pb-4 text-sm text-muted hidden">No. They scan packages. We are agent payments control — Approval Inbox and spend limits for agent wallets. Not a package scanner.</div></div><div><button type="button" class="flex w-full items-start justify-between gap-4 px-5 py-4 text-left" aria-expanded="false"><span class="font-medium">Do you email me when something looks off?</span><span class="mt-0.5 text-muted">+</span></button><div class="px-5 pb-4 text-sm text-muted hidden">If Email alerts is on in Settings (on by default), we send optional pings for a policy alert, spend near the daily cap, a hold waiting in Inbox (/inbox), or a hard block. When a spend is held, that email (and Slack, if you saved an incoming webhook URL in Settings) includes a link to Approval Inbox. No action within 10 minutes = block — the agent must abort. Console alerts still list at /alerts. Turn Email alerts off to keep policy pings in the console only. If the agent skips the check, Inbox cannot stop that send.</div></div><div><button type="button" class="flex w-full items-start justify-between gap-4 px-5 py-4 text-left" aria-expanded="false"><span class="font-medium">How is this different from agentaudit.dev, SpendGuard, or Turnkey?</span><span class="mt-0.5 text-muted">+</span></button><div class="px-5 pb-4 text-sm text-muted hidden">Agent Control is agent payments control for agent wallets — spend limits, approval before agent send, hold vs block. Not a package scanner. SpendGuard (x402-spendguard) is a firewall you run yourself. We host Approval Inbox and Agent Audit. You keep the keys.<!-- --> <a href="https://agent-control.net/docs#compare" class="text-fg underline underline-offset-4">Compare on docs</a>.</div></div><div><button type="button" class="flex w-full items-start justify-between gap-4 px-5 py-4 text-left" aria-expanded="false"><span class="font-medium">Is the trial free? Do I need a card or KYC?</span><span class="mt-0.5 text-muted">+</span></button><div class="px-5 pb-4 text-sm text-muted hidden">Yes. One day (24 hours) of the full console. No card. No KYC. After that pay Starter, Pro, or Team in USDC, SOL, or ETH from Billing. You pay your own gas on ETH. We never see your funds and we do not auto-charge next month.</div></div><div><button type="button" class="flex w-full items-start justify-between gap-4 px-5 py-4 text-left" aria-expanded="false"><span class="font-medium">How do I pay? Is there KYC?</span><span class="mt-0.5 text-muted">+</span></button><div class="px-5 pb-4 text-sm text-muted hidden">No KYC and no card. Default is USDC on Solana; you can also pay native SOL or ETH. Scan the QR or copy amount + address from Billing. Do not send from an exchange — they drop the memo / unique amount.</div></div><div><button type="button" class="flex w-full items-start justify-between gap-4 px-5 py-4 text-left" aria-expanded="false"><span class="font-medium">Is this insurance?</span><span class="mt-0.5 text-muted">+</span></button><div class="px-5 pb-4 text-sm text-muted hidden">No. Monitoring and policy checks only. A blocked check is a decision, not a guarantee that funds cannot move.</div></div><div><button type="button" class="flex w-full items-start justify-between gap-4 px-5 py-4 text-left" aria-expanded="false"><span class="font-medium">How do I reach support?</span><span class="mt-0.5 text-muted">+</span></button><div class="px-5 pb-4 text-sm text-muted hidden">Problems or billing questions: email<!-- --> <a href="mailto:support@agent-control.net" class="text-fg underline underline-offset-4">support@agent-control.net</a>.</div></div></div></div></section><footer class="border-t border-border"><div class="mx-auto flex max-w-[1140px] flex-col gap-3 px-5 py-8 text-sm text-subtle md:flex-row md:items-center md:justify-between md:px-6"><a href="https://agent-control.net/" aria-label="Agent Control home" class="gap-3 inline-flex min-h-11 items-center"><svg viewBox="0 0 32 32" class="shrink-0 size-10 text-navy" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M16 2.2 26.7 6.5v8.3c0 6.7-4.7 12.2-10.7 14.1C10 27 5.3 21.5 5.3 14.8V6.5L16 2.2Zm0 9.9a3.3 3.3 0 1 0 0 6.6 3.3 3.3 0 0 0 0-6.6ZM7.5 14.55h5.05v1.7H7.5zm11.95 0H24.5v1.7h-5.05z"></path><circle cx="16" cy="15.4" r="1.45" fill="currentColor"></circle></svg><span class="font-semibold tracking-tight text-xl md:text-2xl">Agent Control</span></a><p>Monitoring and policy checks. Not a custodian. Not insurance.</p><p class="flex flex-col gap-1 text-xs md:items-end"><a href="https://agent-control.net/docs" class="text-muted hover:text-fg">Docs</a><a href="https://agent-control.net/partners" class="text-muted hover:text-fg">Partners</a><a href="https://agent-control.net/llms.txt" class="text-muted hover:text-fg">llms.txt</a><a href="mailto:support@agent-control.net" class="text-muted hover:text-fg">Contact · support@agent-control.net</a><span>Chain marks identify supported networks. Agent Control is not affiliated with Solana, Ethereum, or Base.</span></p></div></footer></div>
+
+<script>
+document.getElementById('week-form').addEventListener('submit', function (e) {
+  e.preventDefault();
+  var rows = [
+    ['fine','$180','USDC to a known market maker'],
+    ['fine','$12','SOL rent for a program account'],
+    ['wait','$2,400','First-time address'],
+    ['stop','$9,100','Over the daily cap']
+  ];
+  var chips = {fine:'text-[#166534] bg-[#dcfce7]', wait:'text-[#92400e] bg-[#fef3c7]', stop:'text-[#991b1b] bg-[#fee2e2]'};
+  document.getElementById('week-out').innerHTML =
+    '<div class="rounded-[20px] border border-border bg-surface p-5"><p class="text-xs text-muted">Example week · research agent</p><p class="mt-2 text-lg font-semibold">2 fine, 1 would wait, 1 would stop. $9,100 would not have left.</p>' +
+    rows.map(function (r) {
+      return '<div class="mt-3 flex items-center justify-between border-t border-border pt-3 text-sm"><span class="rounded-full px-2 py-0.5 text-xs font-semibold ' + chips[r[0]] + '">' + r[0] + '</span><span class="tabular-nums">' + r[1] + '</span></div><p class="mt-1 text-sm text-muted">' + r[2] + '</p>';
+    }).join('') + '</div>';
+});
+var log = document.getElementById('catch-log');
+var actions = document.getElementById('catch-actions');
+function setCatch(step) {
+  var lines = {
+    idle: 'Tap Go. The agent tries to pay a license fee.',
+    wait12: 'Wants $12 · new address\\nWaiting on you\\n$12 would leave.',
+    allowed: 'Allowed this once.\\nNext time this address waits again.',
+    blocked: 'Stopped. $12 did not leave.',
+    wait2400: 'Trade Agent Alpha · Tuesday\\nWants $2,400 · new address\\nWaiting on you'
+  };
+  log.textContent = lines[step];
+  var btn = 'inline-flex h-10 items-center rounded-full px-4 text-sm font-semibold ';
+  if (step === 'idle') actions.innerHTML = '<button type="button" id="go" class="' + btn + 'bg-primary text-primary-fg">Go</button>';
+  else if (step === 'wait12' || step === 'wait2400') actions.innerHTML = '<button type="button" id="allow" class="' + btn + 'bg-primary text-primary-fg">Allow once</button><button type="button" id="block" class="' + btn + 'border border-border bg-white text-fg">Block</button>';
+  else actions.innerHTML = '<button type="button" id="big" class="' + btn + 'bg-primary text-primary-fg">See the $2,400 one</button><button type="button" id="reset" class="' + btn + 'border border-border bg-white text-fg">Again</button>';
+}
+actions.addEventListener('click', function (e) {
+  var id = e.target && e.target.id;
+  if (id === 'go') setCatch('wait12');
+  if (id === 'allow') setCatch('allowed');
+  if (id === 'block') setCatch('blocked');
+  if (id === 'big') setCatch('wait2400');
+  if (id === 'reset') setCatch('idle');
+});
+document.querySelectorAll('#faq button[aria-expanded]').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    var open = btn.getAttribute('aria-expanded') === 'true';
+    var panel = btn.nextElementSibling;
+    btn.setAttribute('aria-expanded', open ? 'false' : 'true');
+    btn.querySelector('span:last-child').textContent = open ? '+' : '–';
+    if (panel) panel.classList.toggle('hidden', open);
+  });
+});
+</script>
+
 </body>
 </html>

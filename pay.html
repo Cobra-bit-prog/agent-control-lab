@@ -1,1 +1,34 @@
-<!doctype html><meta charset=utf-8><meta http-equiv=refresh content='0;url=index.html#pay'><link rel=canonical href='index.html#pay'><title>Redirect</title><p><a href='index.html#pay'>Open the pay tour</a></p>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#eef3f8" />
+  <title>Pay $29 — Agent Control sandbox</title>
+  <link rel="stylesheet" href="./styles-live.css" />
+  <style>html, body { background: #eef3f8 !important; }</style>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&display=swap" />
+  <style>
+    .pay-qr { width: 100%; height: auto; display: block; }
+    .pay-qr img, .pay-qr svg { width: 100%; height: auto; }
+  </style>
+</head>
+<body class="bg-bg text-fg antialiased">
+<div class="sky min-h-screen bg-bg text-fg">
+  <div class="border-b border-border bg-navy px-4 py-2 text-center text-[13px] text-white">Sandbox — live site is untouched · <a class="underline" href="https://agent-control.net">agent-control.net</a></div>
+  <header class="mx-auto flex max-w-[1140px] items-center justify-between gap-3 px-5 py-[18px] md:px-6">
+    <a href="./index.html" class="inline-flex min-h-11 items-center gap-3 font-semibold tracking-tight text-xl">Agent Control</a>
+    <a href="./index.html#pricing" class="text-sm font-medium text-muted hover:text-fg">Pricing</a>
+  </header>
+  <main class="mx-auto max-w-md px-5 pb-16 md:px-6">
+    <p class="text-sm text-muted">Send $29 USDC on Solana. Scan or tap Pay. We unlock when it lands.</p>
+    <div id="pay-root" class="mt-6"></div>
+  </main>
+</div>
+<script src="./js/qrcode.min.js"></script>
+<script type="module">
+  import { mountPayScreen } from "./js/pay-ui.js";
+  mountPayScreen(document.getElementById("pay-root"));
+</script>
+</body>
+</html>

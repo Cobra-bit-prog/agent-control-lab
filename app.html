@@ -14,11 +14,12 @@
 </head>
 <body class="bg-bg text-fg antialiased">
 <div class="sky min-h-screen bg-bg text-fg">
-  <div class="border-b border-border bg-navy px-4 py-2 text-center text-[13px] text-white">Sandbox — live site is untouched · <a class="underline" href="https://agent-control.net">agent-control.net</a></div>
+  <div class="border-b border-border bg-navy px-4 py-2 text-center text-[13px] text-white">Sandbox — live site is untouched · <a class="underline" href="https://agent-control.net">agent-control.net</a> · <a class="underline" href="./docs/#x402">Lab docs</a> · <a class="underline" href="./app/">Job budget</a></div>
   <header class="mx-auto flex max-w-[1140px] items-center justify-between gap-3 px-5 py-[18px] md:px-6">
     <a href="./index.html" class="inline-flex min-h-11 items-center gap-3 font-semibold tracking-tight text-xl">Agent Control</a>
     <nav class="flex items-center gap-4 text-sm font-medium text-muted">
       <a class="hover:text-fg" href="./app.html">Console</a>
+      <a class="hover:text-fg" href="./app/">Job budget</a>
       <a class="hover:text-fg" href="./pay.html?plan=starter">Pay $29</a>
     </nav>
   </header>
@@ -38,6 +39,12 @@
           <div><p class="text-[11px] text-muted">Open alerts</p><p class="mt-0.5 text-lg font-semibold text-danger">1</p></div>
         </div>
         <p class="mt-4 text-sm text-muted">Preview console. After 24 hours this screen locks and shows Pay $29.</p>
+      </div>
+
+      <div id="job-budget" class="mt-8 rounded-[20px] border border-border bg-surface p-[22px]">
+        <p class="text-xs font-semibold uppercase tracking-[0.16em] text-navy">Job budget</p>
+        <h2 class="mt-2 text-xl font-semibold tracking-tight">A budget for the job.</h2>
+        <p class="mt-2 text-sm text-muted">Give the run a dollar cap and a clock. The daily cap still applies. <a class="font-semibold text-navy" href="./app/">Open the job budget →</a></p>
       </div>
     </div>
     <div id="lock" class="hidden">

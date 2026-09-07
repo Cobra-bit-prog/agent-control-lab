@@ -1,11 +1,18 @@
-import { parsePlan, PLANS, newPayReference, PAY_EXPIRY_MS } from "../../js/pay-core.js";
+import { parsePlan, PLANS, newPayReference, PAY_EXPIRY_MS, SOLANA_PAYOUT_ADDRESS } from "../../js/pay-core.js";
 
 const mem = new Map();
 
+/** Human USDC always lands on the production Phantom receive pubkey. */
 export function payoutAddress() {
   const fromEnv = process.env.SOLANA_PAYOUT_ADDRESS?.trim();
-  if (fromEnv) return fromEnv;
-  return "";
+  if (fromEnv && fromEnv !== SOLANA_PAYOUT_ADDRESS) {
+    console.error(
+      "[billing] SOLANA_PAYOUT_ADDRESS must be",
+      SOLANA_PAYOUT_ADDRESS,
+      "— ignoring override",
+    );
+  }
+  return SOLANA_PAYOUT_ADDRESS;
 }
 
 export function checkoutConfigured() {
@@ -18,11 +25,6 @@ function uid() {
 
 export function createInvoice(opts) {
   const recipient = payoutAddress();
-  if (!recipient) {
-    const err = new Error("Checkout is not configured for Solana.");
-    err.status = 503;
-    throw err;
-  }
   const planId = parsePlan(opts.plan);
   const plan = PLANS[planId];
   const now = Date.now();

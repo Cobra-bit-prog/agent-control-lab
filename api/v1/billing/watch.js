@@ -17,7 +17,6 @@ export default async function handler(req, res) {
   const body = typeof req.body === "object" && req.body ? req.body : {};
   const q = req.query || {};
   const reference = String(q.reference || body.reference || "").trim();
-  const recipient = String(q.recipient || body.recipient || payoutAddress() || "").trim();
   const planId = parsePlan(q.plan || body.plan);
   const amountUsdc = Number(q.amount || body.amount || PLANS[planId].price);
   const id = String(q.id || body.id || "").trim();
@@ -25,7 +24,7 @@ export default async function handler(req, res) {
 
   const target = {
     reference: row?.reference || reference,
-    recipient: row?.recipient || recipient,
+    recipient: payoutAddress(),
     amountUsdc: row ? PLANS[parsePlan(row.plan)].price : amountUsdc,
   };
   if (!target.reference || !target.recipient) {

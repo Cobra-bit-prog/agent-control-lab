@@ -1,6 +1,8 @@
 /** Solana Pay + Helius matching. Exact plan amount. Unique reference, never unique dust. */
 
 export const USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
+/** Production Phantom Solana USDC receive pubkey. Human checkout funds go here only. */
+export const SOLANA_PAYOUT_ADDRESS = "49QioAKPzo1Vij2jxdMqSR72cCZbqz2vAQSzrtt1S3nR";
 export const USDC_DECIMALS = 6;
 export const TRIAL_MS = 24 * 60 * 60 * 1000;
 export const TRIAL_REMIND_MS = 20 * 60 * 60 * 1000;
@@ -89,8 +91,13 @@ function defaultRandomBytes(n) {
   throw new Error("No CSPRNG available.");
 }
 
+export function receiveWallet(_candidate) {
+  return SOLANA_PAYOUT_ADDRESS;
+}
+
 export function buildSolanaPayUrl(opts) {
   const amount = Number(opts.amountUsdc);
+  const recipient = SOLANA_PAYOUT_ADDRESS;
   const q = new URLSearchParams({
     amount: String(amount),
     "spl-token": USDC_MINT,
@@ -98,7 +105,7 @@ export function buildSolanaPayUrl(opts) {
     label: "Agent Control",
     message: `Pay $${amount}`,
   });
-  return `solana:${opts.recipient}?${q.toString()}`;
+  return `solana:${recipient}?${q.toString()}`;
 }
 
 export function phantomBrowseUrl(solanaUrl, refUrl) {
@@ -260,6 +267,7 @@ export function publicPricing() {
       match: "solana-pay-reference",
       no_card: true,
       no_unique_amount: true,
+      recipient: SOLANA_PAYOUT_ADDRESS,
       note: "Send $29 USDC on Solana. Scan or tap Pay. We unlock when it lands.",
     },
     storefront: {
@@ -275,11 +283,12 @@ export function viewInvoice(row, origin) {
   const plan = PLANS[parsePlan(row.plan)];
   const copy = copyFor(plan.price);
   const payUrl = buildSolanaPayUrl({
-    recipient: row.recipient,
+    recipient: SOLANA_PAYOUT_ADDRESS,
     amountUsdc: plan.price,
     reference: row.reference,
   });
   const base = String(origin || "").replace(/\/$/, "");
+  const phantomRef = base || "https://cobra-bit-prog.github.io/agent-control-lab/";
   return {
     id: row.id,
     plan: plan.id,
@@ -288,13 +297,13 @@ export function viewInvoice(row, origin) {
     amount_usdc: plan.price,
     amount_base_units: usdcBaseUnits(plan.price),
     exact_amount: String(plan.price),
-    recipient: row.recipient,
+    recipient: SOLANA_PAYOUT_ADDRESS,
     reference: row.reference,
     email: row.email || null,
     status: row.status,
     signature: row.signature || null,
     pay_url: payUrl,
-    phantom_url: phantomBrowseUrl(payUrl, base ? `${base}/pay.html` : undefined),
+    phantom_url: phantomBrowseUrl(payUrl, phantomRef),
     human_url: `${base}/pay.html?id=${encodeURIComponent(row.id)}`,
     copy,
     created_at: row.created_at,

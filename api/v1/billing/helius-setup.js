@@ -14,8 +14,8 @@ export default async function handler(req, res) {
   }
   const apiKey = process.env.HELIUS_API_KEY?.trim();
   const recipient = payoutAddress();
-  if (!apiKey || !recipient) {
-    res.status(503).json({ error: "Need HELIUS_API_KEY and SOLANA_PAYOUT_ADDRESS." });
+  if (!apiKey) {
+    res.status(503).json({ error: "Need HELIUS_API_KEY. SOLANA_PAYOUT_ADDRESS is 49QioAKPzo1Vij2jxdMqSR72cCZbqz2vAQSzrtt1S3nR." });
     return;
   }
 

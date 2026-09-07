@@ -4,6 +4,16 @@ Human checkout is Solana Pay + Helius. Unique **reference** per invoice. Exact *
 
 Live production is untouched: https://agent-control.net
 
+## Receive wallet
+
+All human USDC on Solana goes to the production Phantom receive pubkey:
+
+```
+SOLANA_PAYOUT_ADDRESS=49QioAKPzo1Vij2jxdMqSR72cCZbqz2vAQSzrtt1S3nR
+```
+
+QR, Pay deep link, and invoice `recipient` all target this address. Matching uses a unique Solana Pay reference — never a different receive wallet.
+
 ## Preview
 
 - Pay screen: `pay.html?plan=starter`
@@ -13,13 +23,7 @@ Live production is untouched: https://agent-control.net
 
 Local: `python3 -m http.server 4173` then open `/pay.html?plan=starter`.
 
-Set the USDC receive wallet (same address every invoice):
-
-```js
-localStorage.setItem("ac_payout", "<YOUR_SOLANA_USDC_WALLET>")
-```
-
-On Vercel: `SOLANA_PAYOUT_ADDRESS`, optional `HELIUS_API_KEY`, then `POST /api/v1/billing/helius-setup`.
+On Vercel set `SOLANA_PAYOUT_ADDRESS` to the value above (expected production value). Optional `HELIUS_API_KEY`, then `POST /api/v1/billing/helius-setup`.
 
 ## Agent API (not the human front door)
 

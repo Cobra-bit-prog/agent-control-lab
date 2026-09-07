@@ -1,6 +1,6 @@
 import { parsePlan, parseEmail, viewInvoice, PLANS } from "../../../js/pay-core.js";
 import { CORS } from "../../_lib/http.js";
-import { checkoutConfigured, createInvoice, getInvoice } from "../../_lib/store.js";
+import { checkoutConfigured, createInvoice, getInvoice, payoutAddress } from "../../_lib/store.js";
 import { findMatchingUsdcPayment } from "../../_lib/rpc.js";
 import { markPaid } from "../../_lib/store.js";
 
@@ -48,7 +48,7 @@ export default async function handler(req, res) {
     try {
       const match = await findMatchingUsdcPayment({
         reference: row.reference,
-        recipient: row.recipient,
+        recipient: payoutAddress(),
         amountUsdc: PLANS[row.plan].price,
       });
       if (match.kind === "paid") markPaid(row, match);

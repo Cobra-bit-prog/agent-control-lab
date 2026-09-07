@@ -2,20 +2,16 @@ import {
   PLANS,
   parsePlan,
   parseEmail,
-  copyFor,
   newPayReference,
-  buildSolanaPayUrl,
-  phantomBrowseUrl,
   matchUsdcByReference,
   usdcBaseUnits,
   viewInvoice,
+  copyFor,
 } from "./pay-core.js";
 import { DEFAULT_RECIPIENT, RPC_URLS } from "./pay-config.js";
 import { markPaid } from "./trial.js";
 
 const STORE_KEY = "ac_invoices_v1";
-const PAYOUT_KEY = "ac_payout";
-const USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
 
 export function apiRoot() {
   return new URL("../api/v1/", import.meta.url).href.replace(/\/?$/, "/");
@@ -47,25 +43,27 @@ export function readInvoice(id) {
 }
 
 export async function fetchConfig() {
-  const local = (typeof localStorage !== "undefined" && localStorage.getItem(PAYOUT_KEY)) || "";
   try {
     const res = await fetch(`${apiRoot()}billing/config`);
     if (res.ok) {
       const data = await res.json();
+      const recipient = DEFAULT_RECIPIENT;
+      if (data.recipient && data.recipient !== recipient) {
+        console.error("[pay] recipient must be", recipient);
+      }
       return {
-        recipient: data.recipient || local || DEFAULT_RECIPIENT,
-        configured: Boolean(data.recipient || local || DEFAULT_RECIPIENT),
+        recipient,
+        configured: true,
         helius: Boolean(data.helius),
       };
     }
   } catch {
-    /* GH Pages has no API — use local config */
+    /* GH Pages has no API — use the production receive pubkey */
   }
-  const recipient = local || DEFAULT_RECIPIENT;
-  return { recipient, configured: Boolean(recipient), helius: false };
+  return { recipient: DEFAULT_RECIPIENT, configured: true, helius: false };
 }
 
-export function makeLocalInvoice({ plan, email, recipient, source }) {
+export function makeLocalInvoice({ plan, email, source }) {
   const planId = parsePlan(plan);
   const now = Date.now();
   const row = {
@@ -75,7 +73,7 @@ export function makeLocalInvoice({ plan, email, recipient, source }) {
     source: source || "human",
     amount_usdc: PLANS[planId].price,
     amount_base_units: usdcBaseUnits(PLANS[planId].price),
-    recipient,
+    recipient: DEFAULT_RECIPIENT,
     reference: newPayReference(),
     status: "pending",
     signature: null,
@@ -86,7 +84,6 @@ export function makeLocalInvoice({ plan, email, recipient, source }) {
 }
 
 export async function createInvoice({ plan, email, source }) {
-  const cfg = await fetchConfig();
   try {
     const res = await fetch(`${apiRoot()}billing/invoice`, {
       method: "POST",
@@ -101,7 +98,7 @@ export async function createInvoice({ plan, email, source }) {
         email: view.email,
         source: source || "human",
         amount_usdc: view.amount_usdc,
-        recipient: view.recipient,
+        recipient: DEFAULT_RECIPIENT,
         reference: view.reference,
         status: view.status,
         signature: view.signature,
@@ -116,7 +113,6 @@ export async function createInvoice({ plan, email, source }) {
   return makeLocalInvoice({
     plan,
     email,
-    recipient: cfg.recipient || "",
     source,
   });
 }
@@ -144,7 +140,7 @@ export async function watchInvoice(row) {
   if (!row || row.status === "paid") return row;
   try {
     const res = await fetch(
-      `${apiRoot()}billing/watch?id=${encodeURIComponent(row.id)}&reference=${encodeURIComponent(row.reference)}&recipient=${encodeURIComponent(row.recipient)}&plan=${encodeURIComponent(row.plan)}`,
+      `${apiRoot()}billing/watch?id=${encodeURIComponent(row.id)}&reference=${encodeURIComponent(row.reference)}&recipient=${encodeURIComponent(DEFAULT_RECIPIENT)}&plan=${encodeURIComponent(row.plan)}`,
     );
     if (res.ok) {
       const data = await res.json();
@@ -171,7 +167,7 @@ export async function watchInvoice(row) {
       packed.push({ signature: s.signature, err: s.err, tx });
     }
     const match = matchUsdcByReference({
-      recipient: row.recipient,
+      recipient: DEFAULT_RECIPIENT,
       amountUsdc: PLANS[parsePlan(row.plan)].price,
       signatures: packed,
     });
@@ -259,7 +255,8 @@ export function renderPayBlock(root, row, opts = {}) {
   const origin = opts.origin || window.location.origin + window.location.pathname.replace(/[^/]+$/, "");
   const view = viewInvoice(row, origin.replace(/\/$/, ""));
   const paid = row.status === "paid";
-  const configured = Boolean(row.recipient);
+  const configured = true;
+  const recipient = DEFAULT_RECIPIENT;
 
   root.innerHTML = `
     <div class="pay-card rounded-[20px] border border-border bg-surface p-6 shadow-[0_16px_40px_-20px_rgb(18_38_63/0.18)]">
@@ -286,10 +283,10 @@ export function renderPayBlock(root, row, opts = {}) {
       </div>
       <div class="mt-4 rounded-[14px] border border-border bg-elevated px-3.5 py-3">
         <p class="text-xs text-muted">Address</p>
-        <p class="mt-1 break-all font-mono text-xs leading-relaxed">${esc(row.recipient || "Checkout is not configured.")}</p>
+        <p class="mt-1 break-all font-mono text-xs leading-relaxed">${esc(recipient)}</p>
         <button type="button" data-copy class="mt-2 text-sm font-semibold text-navy">Copy address</button>
       </div>
-      <a data-pay class="mt-5 inline-flex h-11 w-full items-center justify-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-fg ${configured ? "" : "pointer-events-none opacity-50"}" href="${configured ? esc(view.phantom_url) : "#"}">${esc(copy.cta)}</a>
+      <a data-pay class="mt-5 inline-flex h-11 w-full items-center justify-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-fg ${configured ? "" : "pointer-events-none opacity-50"}" href="${configured ? esc(view.pay_url) : "#"}" data-phantom="${configured ? esc(view.phantom_url) : ""}">${esc(copy.cta)}</a>
       <p data-status class="mt-4 text-center text-sm font-medium text-navy">${esc(copy.waiting)}</p>
       <p class="mt-3 text-center text-xs text-muted">${esc(copy.warn)}</p>
       <details class="mt-5 rounded-[14px] border border-border bg-elevated px-3.5 py-3">
@@ -306,11 +303,22 @@ export function renderPayBlock(root, row, opts = {}) {
     const copyBtn = root.querySelector("[data-copy]");
     if (copyBtn) {
       copyBtn.addEventListener("click", async () => {
-        const ok = await copyText(row.recipient);
+        const ok = await copyText(recipient);
         copyBtn.textContent = ok ? "Copied" : "Copy address";
         setTimeout(() => {
           copyBtn.textContent = "Copy address";
         }, 1600);
+      });
+    }
+    const payBtn = root.querySelector("[data-pay]");
+    if (payBtn && configured) {
+      payBtn.addEventListener("click", (e) => {
+        const phantom = payBtn.getAttribute("data-phantom");
+        const solana = payBtn.getAttribute("href") || "";
+        if (!solana.startsWith("solana:")) return;
+        e.preventDefault();
+        const mobile = /iPhone|iPad|Android/i.test(navigator.userAgent || "");
+        window.location.assign(mobile || !phantom ? solana : phantom);
       });
     }
   }
@@ -333,7 +341,7 @@ export async function mountPayScreen(root, options = {}) {
           plan: view.plan,
           email: view.email,
           amount_usdc: view.amount_usdc,
-          recipient: view.recipient,
+          recipient: DEFAULT_RECIPIENT,
           reference: view.reference,
           status: view.status,
           signature: view.signature,
@@ -344,6 +352,10 @@ export async function mountPayScreen(root, options = {}) {
     } catch {
       /* local only */
     }
+  }
+  if (row) {
+    row.recipient = DEFAULT_RECIPIENT;
+    saveInvoice(row);
   }
   if (!row) {
     row = await createInvoice({ plan, email, source: options.source || "human" });
@@ -391,5 +403,3 @@ export async function mountPayScreen(root, options = {}) {
   const timer = setInterval(paint, 4000);
   return () => clearInterval(timer);
 }
-
-void USDC_MINT;

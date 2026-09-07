@@ -1,12 +1,9 @@
-/** Lab pay config. Same USDC wallet for every invoice; Solana Pay reference is unique. */
+import { SOLANA_PAYOUT_ADDRESS } from "./pay-core.js";
 
 export const USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
 
-/**
- * Receiving wallet for USDC on Solana.
- * Override with SOLANA_PAYOUT_ADDRESS on the API, or localStorage ac_payout for a local lab.
- */
-export const DEFAULT_RECIPIENT = "";
+/** Same public receive pubkey as production Vercel SOLANA_PAYOUT_ADDRESS. */
+export const DEFAULT_RECIPIENT = SOLANA_PAYOUT_ADDRESS;
 
 export const RPC_URLS = [
   "https://api.mainnet-beta.solana.com",

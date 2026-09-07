@@ -9,6 +9,9 @@ Human front door is one rail: $29 USDC on Solana. Scan or tap Pay. We unlock whe
 
 Solana Pay unique reference + Helius when it lands. No unique-amount matching. No in-page Phantom. No card. No KYC.
 
+**Receive wallet (all human USDC):** `49QioAKPzo1Vij2jxdMqSR72cCZbqz2vAQSzrtt1S3nR`
+Env: `SOLANA_PAYOUT_ADDRESS=49QioAKPzo1Vij2jxdMqSR72cCZbqz2vAQSzrtt1S3nR` (same public Phantom pubkey as production Vercel). Do not invent another receive address.
+
 3-second pitch: Send $29 USDC on Solana. Scan or tap Pay. We unlock when it lands.
 
 Copy

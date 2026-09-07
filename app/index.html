@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#eef3f8" />
+  <title>Job budget — Agent Control lab</title>
+  <link rel="stylesheet" href="../styles-live.css" />
+  <style>html, body { background: #eef3f8 !important; }</style>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&display=swap" />
+</head>
+<body class="bg-bg text-fg antialiased">
+<div class="sky min-h-screen bg-bg text-fg">
+  <div class="border-b border-border bg-navy px-4 py-2 text-center text-[13px] text-white">Sandbox — live site is untouched · <a class="underline" href="https://agent-control.net">agent-control.net</a> · <a class="underline" href="../app.html">Console</a> · <a class="underline" href="../pay.html?plan=starter">Pay $29</a></div>
+  <header class="mx-auto flex max-w-[1140px] items-center justify-between gap-3 px-5 py-[18px] md:px-6">
+    <a href="../" class="inline-flex min-h-11 items-center gap-3 font-semibold tracking-tight text-xl">Agent Control</a>
+    <span class="rounded-full border border-border bg-white px-3 py-1 text-xs text-muted">Starter · 1 active job budget</span>
+  </header>
+
+  <main class="mx-auto grid max-w-[1140px] gap-8 px-5 pb-20 md:grid-cols-2 md:px-6">
+    <section>
+      <p class="text-xs font-semibold uppercase tracking-[0.16em] text-navy">Job budget</p>
+      <h1 class="mt-2 text-3xl font-semibold tracking-tight">A budget for the job.</h1>
+      <p class="mt-2 max-w-[46ch] text-muted">Give the run a dollar cap and a clock. The agent can read what is left. Over the cap is stop. The daily cap still applies.</p>
+
+      <form id="job-form" class="mt-6 rounded-[20px] border border-border bg-surface p-5 shadow-[0_16px_40px_-20px_rgb(18_38_63/0.18)]">
+        <label class="block text-sm font-medium">Job name
+          <input name="name" required placeholder="License run" class="mt-1 h-11 w-full rounded-full border border-border bg-white px-4 text-sm outline-none" />
+        </label>
+        <label class="mt-3 block text-sm font-medium">Dollar cap
+          <input name="cap" type="number" min="1" step="1" required placeholder="80" class="mt-1 h-11 w-full rounded-full border border-border bg-white px-4 text-sm outline-none" />
+        </label>
+        <label class="mt-3 block text-sm font-medium">End time <span class="font-normal text-muted">(optional)</span>
+          <input name="ends" type="datetime-local" class="mt-1 h-11 w-full rounded-full border border-border bg-white px-4 text-sm outline-none" />
+        </label>
+        <button type="submit" class="mt-4 inline-flex h-11 items-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-fg">Set the cap</button>
+        <p id="job-msg" class="mt-3 text-sm text-muted">Starter includes 1 active job budget. More on Pro.</p>
+      </form>
+
+      <div id="jobs" class="mt-6 space-y-3"></div>
+    </section>
+
+    <section>
+      <h2 class="text-2xl font-semibold tracking-tight">Try a pay</h2>
+      <p class="mt-2 text-muted">Check uses the job. Fine, wait, or stop — then you settle.</p>
+      <form id="check-form" class="mt-6 rounded-[20px] border border-border bg-surface p-5 shadow-[0_16px_40px_-20px_rgb(18_38_63/0.18)]">
+        <label class="block text-sm font-medium">Payee
+          <input name="to" value="PayeeKnown111111111111111111111111111" class="mt-1 h-11 w-full rounded-full border border-border bg-white px-4 font-mono text-xs outline-none" />
+        </label>
+        <label class="mt-3 block text-sm font-medium">Amount (USD)
+          <input name="amount" type="number" min="1" step="1" value="20" class="mt-1 h-11 w-full rounded-full border border-border bg-white px-4 text-sm outline-none" />
+        </label>
+        <label class="mt-3 block text-sm font-medium">Job
+          <select name="job_id" class="mt-1 h-11 w-full rounded-full border border-border bg-white px-4 text-sm outline-none"></select>
+        </label>
+        <div class="mt-4 flex flex-wrap gap-2">
+          <button type="submit" class="inline-flex h-11 items-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-fg">Check</button>
+          <button type="button" id="try-new" class="inline-flex h-11 items-center rounded-full border border-border bg-white px-4 text-sm font-semibold">New payee</button>
+          <button type="button" id="try-over" class="inline-flex h-11 items-center rounded-full border border-border bg-white px-4 text-sm font-semibold">Over the cap</button>
+        </div>
+      </form>
+      <div id="result" class="mt-4 rounded-[20px] border border-border bg-white p-5 text-sm"></div>
+      <div id="wait-actions" class="mt-3 flex flex-wrap gap-2"></div>
+    </section>
+  </main>
+</div>
+<script type="module">
+import { createSandbox, handleRequest, LAB_KEY, KNOWN_PAYEE } from "../lib/policy.js";
+
+const local = createSandbox();
+const KEY = LAB_KEY;
+const jobsEl = document.getElementById("jobs");
+const jobSelect = document.querySelector("#check-form [name=job_id]");
+const resultEl = document.getElementById("result");
+const waitEl = document.getElementById("wait-actions");
+const jobMsg = document.getElementById("job-msg");
+
+function chip(decision) {
+  const map = {
+    fine: "text-[#166534] bg-[#dcfce7]",
+    wait: "text-[#92400e] bg-[#fef3c7]",
+    stop: "text-[#991b1b] bg-[#fee2e2]",
+  };
+  return '<span class="rounded-full px-2 py-0.5 text-xs font-semibold ' + (map[decision] || "") + '">' + decision + "</span>";
+}
+
+async function api(method, path, body) {
+  try {
+    const res = await fetch(path, {
+      method,
+      headers: {
+        Authorization: "Bearer " + KEY,
+        "Content-Type": "application/json",
+      },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+    const ct = res.headers.get("content-type") || "";
+    if (ct.includes("application/json")) {
+      return { status: res.status, body: await res.json() };
+    }
+  } catch (_) {}
+  return handleRequest({
+    method,
+    url: path,
+    headers: { authorization: "Bearer " + KEY },
+    body,
+  }, local);
+}
+
+function renderJobs(list) {
+  const jobs = (list && list.jobs) || [];
+  jobSelect.innerHTML = jobs.map(function (j) {
+    return '<option value="' + j.id + '">' + j.name + (j.expired ? " (ended)" : "") + "</option>";
+  }).join("");
+  if (!jobs.length) {
+    jobsEl.innerHTML = '<p class="text-sm text-muted">No job yet. Set a cap for this run.</p>';
+    return;
+  }
+  jobsEl.innerHTML = jobs.map(function (j) {
+    return '<div class="rounded-[20px] border border-border bg-surface p-5"><p class="text-sm font-semibold">' + j.name + '</p><p class="mt-1 text-2xl font-semibold tabular-nums">$' + j.remaining_usd + ' left</p><p class="mt-1 text-xs text-muted">Cap $' + j.cap_usd + (j.expired ? " · ended" : "") + (j.ends_at ? " · clock set" : "") + "</p></div>";
+  }).join("");
+}
+
+async function refresh() {
+  const r = await api("GET", "/api/v1/jobs");
+  renderJobs(r.body);
+}
+
+document.getElementById("job-form").addEventListener("submit", async function (e) {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const ends = fd.get("ends");
+  const body = { name: fd.get("name"), cap_usd: Number(fd.get("cap")) };
+  if (ends) body.ends_at = new Date(String(ends)).getTime();
+  const r = await api("POST", "/api/v1/jobs", body);
+  jobMsg.textContent = r.body.error || ("Job set. $" + r.body.remaining_usd + " left.");
+  await refresh();
+});
+
+async function runCheck(to, amount) {
+  const job_id = jobSelect.value;
+  const r = await api("POST", "/api/v1/check", { to: to, value_usd: Number(amount), job_id: job_id });
+  const d = r.body;
+  waitEl.innerHTML = "";
+  if (d.error) {
+    resultEl.innerHTML = '<p class="text-danger">' + d.error + "</p>";
+    return;
+  }
+  const left = d.remaining_usd || {};
+  resultEl.innerHTML =
+    '<p class="flex items-center gap-2">' + chip(d.decision) + "<span>" + (d.reason || "") + "</span></p>" +
+    '<p class="mt-2 text-muted">Job $' + (left.job_usd ?? "—") + " left · Daily $" + (left.daily_usd ?? "—") + " left</p>";
+  if (d.decision === "wait" && d.poll_url) {
+    waitEl.innerHTML =
+      '<button type="button" data-url="' + d.poll_url + '" data-act="allow_once" class="inline-flex h-10 items-center rounded-full bg-primary px-4 text-sm font-semibold text-primary-fg">Allow once</button>' +
+      '<button type="button" data-url="' + d.poll_url + '" data-act="block" class="inline-flex h-10 items-center rounded-full border border-border bg-white px-4 text-sm font-semibold">Block</button>';
+  }
+  await refresh();
+}
+
+document.getElementById("check-form").addEventListener("submit", async function (e) {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  await runCheck(fd.get("to"), fd.get("amount"));
+});
+
+document.getElementById("try-new").addEventListener("click", function () {
+  document.querySelector("#check-form [name=to]").value = "NewPayee" + Date.now();
+  document.querySelector("#check-form [name=amount]").value = "12";
+});
+
+document.getElementById("try-over").addEventListener("click", function () {
+  document.querySelector("#check-form [name=to]").value = KNOWN_PAYEE;
+  document.querySelector("#check-form [name=amount]").value = "69";
+});
+
+waitEl.addEventListener("click", async function (e) {
+  const btn = e.target.closest("button[data-url]");
+  if (!btn) return;
+  const r = await api("POST", btn.getAttribute("data-url"), { action: btn.getAttribute("data-act") });
+  resultEl.innerHTML = "<p>" + (r.body.note || r.body.status) + "</p>";
+  waitEl.innerHTML = "";
+});
+
+refresh();
+</script>
+</body>
+</html>

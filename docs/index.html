@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#eef3f8" />
+  <title>Docs — Agent Control lab</title>
+  <link rel="stylesheet" href="../styles-live.css" />
+  <style>html, body { background: #eef3f8 !important; }</style>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&display=swap" />
+</head>
+<body class="bg-bg text-fg antialiased">
+<div class="sky min-h-screen bg-bg text-fg">
+  <div class="border-b border-border bg-navy px-4 py-2 text-center text-[13px] text-white">Sandbox — live site is untouched · <a class="underline" href="https://agent-control.net">agent-control.net</a> · <a class="underline" href="../">Lab home</a> · <a class="underline" href="../app/">Job budget</a></div>
+  <header class="mx-auto flex max-w-[1140px] items-center justify-between gap-3 px-5 py-[18px] md:px-6">
+    <a href="../" class="inline-flex min-h-11 items-center gap-3 font-semibold tracking-tight text-xl">Agent Control</a>
+    <nav class="hidden items-center text-sm font-medium text-muted md:flex">
+      <a href="#x402" class="ml-4 hover:text-fg">The check</a>
+      <a href="#job-budget" class="ml-4 hover:text-fg">Job budget</a>
+      <a href="#gate" class="ml-4 hover:text-fg">Sellers</a>
+    </nav>
+  </header>
+
+  <main class="mx-auto max-w-[760px] px-5 pb-20 md:px-6">
+    <p class="text-xs font-semibold uppercase tracking-[0.16em] text-navy">Lab docs</p>
+    <h1 class="mt-2 text-3xl font-semibold tracking-tight md:text-4xl">The agent can pay. The job has a cap. A new payee waits on you.</h1>
+    <p class="mt-3 text-muted">Same check as live: <code class="font-mono text-sm">POST /api/v1/check</code>. MCP <code class="font-mono text-sm">check_transfer</code> is that check. There is not a second check. You keep the keys.</p>
+
+    <section id="check" class="mt-12 scroll-mt-24">
+      <h2 class="text-2xl font-semibold tracking-tight">The check</h2>
+      <p class="mt-2 text-muted">Before money moves, the agent asks. Agent Control answers <strong>fine</strong>, <strong>wait</strong>, or <strong>stop</strong>.</p>
+      <pre class="mt-4 overflow-x-auto rounded-[20px] border border-border bg-surface p-5 font-mono text-[13px] leading-relaxed">{
+  "to": "&lt;destination&gt;",
+  "value_usd": 12,
+  "job_id": "job_research"
+}</pre>
+      <p class="mt-3 text-sm text-muted">Header: <code class="font-mono">Authorization: Bearer YOUR_AGENT_API_KEY</code>. Lab demo key: <code class="font-mono">ack_lab_leashed</code>.</p>
+      <p class="mt-2 text-sm text-muted">Fine: within the job cap, within the daily cap, known payee — then settle. Wait: a new payee waits on you. Stop: over a cap, or the job has ended — do not send.</p>
+    </section>
+
+    <section id="x402" class="mt-12 scroll-mt-24">
+      <h2 class="text-2xl font-semibold tracking-tight">When a service asks for USDC</h2>
+      <p class="mt-2 text-muted">Sit on the pay loop. Do not replace it.</p>
+      <ol class="mt-4 space-y-3 text-sm text-muted">
+        <li><strong class="text-fg">1. 402</strong> — the service asks for USDC.</li>
+        <li><strong class="text-fg">2. POST /api/v1/check</strong> — same body as any other pay. MCP <code class="font-mono">check_transfer</code> maps here. Not a second check.</li>
+        <li><strong class="text-fg">3. fine / wait / stop</strong> — you keep the keys.</li>
+        <li><strong class="text-fg">4. Only then settle</strong> — if the answer was fine. Wait means a human still has to see the new address. Stop means do not send.</li>
+      </ol>
+      <p class="mt-4 text-sm text-muted">A facilitator fee may be added later. Not charged now.</p>
+      <pre class="mt-4 overflow-x-auto rounded-[20px] border border-border bg-surface p-5 font-mono text-[13px] leading-relaxed">// 402 → check → only then settle
+const decision = await fetch("/api/v1/check", {
+  method: "POST",
+  headers: {
+    Authorization: "Bearer " + process.env.AGENT_CONTROL_API_KEY,
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({ to: payTo, value_usd: usd, job_id }),
+}).then((r) => r.json());
+
+if (decision.decision === "stop" || decision.must_abort) throw new Error("do not send");
+if (decision.decision === "wait") {
+  // poll decision.poll_url — a new payee waits on you
+  throw new Error("wait");
+}
+// decision.decision === "fine" → settle</pre>
+    </section>
+
+    <section id="job-budget" class="mt-12 scroll-mt-24">
+      <h2 class="text-2xl font-semibold tracking-tight">A budget for the job</h2>
+      <p class="mt-2 text-muted">Give the run a dollar cap and a clock. This sits on top of the daily cap — it does not replace it. The agent can read what is left. Over either cap is stop. An ended job is stop.</p>
+      <p class="mt-2 text-sm text-muted">Starter includes 1 active job budget. More on Pro.</p>
+      <ul class="mt-4 list-disc space-y-2 pl-5 text-sm text-muted">
+        <li><code class="font-mono">POST /api/v1/jobs</code> — name, cap_usd, optional ends_at</li>
+        <li><code class="font-mono">GET /api/v1/jobs/:id</code> — remaining_usd</li>
+        <li><code class="font-mono">POST /api/v1/check</code> with <code class="font-mono">job_id</code></li>
+      </ul>
+      <p class="mt-3 text-sm"><a class="font-semibold text-navy hover:text-coral" href="../app/">Open the job budget →</a></p>
+    </section>
+
+    <section id="gate" class="mt-12 scroll-mt-24">
+      <h2 class="text-2xl font-semibold tracking-tight">Take money only from agents that have a leash</h2>
+      <p class="mt-2 text-muted">You keep your own checkout. We only answer: is this agent capped, and does a human see new addresses?</p>
+      <pre class="mt-4 overflow-x-auto rounded-[20px] border border-border bg-surface p-5 font-mono text-[13px] leading-relaxed">GET /api/v1/verify/:agent_or_key
+
+{
+  "leashed": true,
+  "cap_exists": true,
+  "human_sees_new_addresses": true
+}</pre>
+      <p class="mt-3 text-sm text-muted">No balances. No keys. Charge later — this route is free in the lab.</p>
+      <p class="mt-6 text-sm font-medium">Badge HTML</p>
+      <p class="mt-1 text-sm text-muted">Pays only if the agent is leashed. You keep the keys.</p>
+      <pre class="mt-3 overflow-x-auto rounded-[20px] border border-border bg-surface p-5 font-mono text-[12px] leading-relaxed">&lt;a href="https://agent-control.net/docs#gate"
+   style="display:inline-flex;align-items:center;gap:8px;border:1px solid #dce4ee;border-radius:999px;padding:8px 14px;background:#fff;color:#12263f;text-decoration:none;font:600 13px/1.3 Instrument Sans,system-ui,sans-serif"&gt;
+  Pays only if the agent is leashed. You keep the keys.
+&lt;/a&gt;</pre>
+      <p class="mt-4">
+        <span class="inline-flex items-center rounded-full border border-border bg-white px-3.5 py-2 text-[13px] font-semibold text-fg shadow-[0_1px_0_rgb(18_38_63/0.04)]">Pays only if the agent is leashed. You keep the keys.</span>
+      </p>
+    </section>
+
+    <section id="billing" class="mt-12 scroll-mt-24">
+      <h2 class="text-2xl font-semibold tracking-tight">Agents still open checkout</h2>
+      <p class="mt-2 text-muted"><code class="font-mono">POST /api/v1/billing/checkout</code> stays for agents. The human pays $29 USDC on Solana. Scan or tap Pay. Matching is a Solana Pay reference — not a special amount. Recipient is <code class="font-mono text-[12px]">49QioAKPzo1Vij2jxdMqSR72cCZbqz2vAQSzrtt1S3nR</code>. No card. No KYC. No in-page Phantom.</p>
+    </section>
+  </main>
+</div>
+</body>
+</html>

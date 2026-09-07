@@ -2,10 +2,16 @@
 
 Date: 2026-09-07
 Production: NOT changed. Live site remains https://agent-control.net
-Public sandbox: https://cobra-bit-prog.github.io/agent-control-lab/pay.html?plan=starter
+Public sandbox: https://cobra-bit-prog.github.io/agent-control-lab/
 
-## Decision
-Human front door is one rail: $29 USDC on Solana. Scan or tap Pay. We unlock when it lands.
+## This PR
+The agent can pay. The job has a cap. A new payee waits on you.
+
+1. x402 — 402 → POST /api/v1/check (MCP check_transfer) → fine / wait / stop → only then settle
+2. Task budget — job $ cap + optional clock on top of daily cap. Starter: 1 active job.
+3. Seller verify — GET /api/v1/verify/:agent_or_key (leashed, cap_exists, human_sees_new_addresses)
+
+Human checkout (merged) stays one rail: $29 USDC on Solana. Scan or tap Pay. We unlock when it lands.
 
 Solana Pay unique reference + Helius when it lands. No unique-amount matching. No in-page Phantom. No card. No KYC.
 
